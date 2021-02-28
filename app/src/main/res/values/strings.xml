@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Vision Test</string>
+    <string name="visual_acuity_test">Visual Acuity Test</string>
 </resources>

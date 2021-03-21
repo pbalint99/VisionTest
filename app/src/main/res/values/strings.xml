@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Vision Test</string>
     <string name="visual_acuity_test">Visual Acuity Test</string>
+    <string name="width_of_screen">Width of screen in millimeters:</string>
 </resources>

@@ -15,4 +15,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/calibration_start"
+        android:layout_width="wrap_content"
+        android:layout_height="37dp"
+        android:text="Calibrate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/va_start"
+        app:layout_constraintStart_toStartOf="@+id/va_start"
+        app:layout_constraintTop_toBottomOf="@+id/va_start" />
 </androidx.constraintlayout.widget.ConstraintLayout>

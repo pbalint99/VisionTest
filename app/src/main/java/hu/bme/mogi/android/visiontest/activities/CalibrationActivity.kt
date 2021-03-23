@@ -16,34 +16,25 @@ class CalibrationActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calibration)
 
-        etWidth.setOnKeyListener(object : View.OnKeyListener {
-            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
-                // If the event is a key-down event on the "enter" button
-                if (event.action == KeyEvent.ACTION_DOWN &&
-                    keyCode == KeyEvent.KEYCODE_ENTER
-                ) {
-                    // Perform action on key press
-                    val displayMetrics: DisplayMetrics = applicationContext.resources.displayMetrics
-                    val dpWidth: Float = displayMetrics.widthPixels / displayMetrics.density
+        doneBtn.setOnClickListener{
+            val displayMetrics: DisplayMetrics = applicationContext.resources.displayMetrics
+            val dpWidth: Float = displayMetrics.widthPixels / displayMetrics.density
 
-                    val sharedPref = applicationContext.getSharedPreferences(
-                        "sp",
-                        Context.MODE_PRIVATE
-                    )
-                    with(sharedPref.edit()) {
-                        putInt("width", etWidth.text.toString().toInt())
-                        putFloat("dpWidth",dpWidth)
-                        apply()
-                    }
-
-                    Toast.makeText(this@CalibrationActivity, "Width set.", Toast.LENGTH_SHORT)
-                        .show()
-
-                    return true
-
-                }
-                return false
+            val sharedPref = applicationContext.getSharedPreferences(
+                "sp",
+                Context.MODE_PRIVATE
+            )
+            with(sharedPref.edit()) {
+                putInt("width", etWidth.text.toString().toInt())
+                putFloat("dpWidth",dpWidth)
+                putFloat("distance",etDistance.text.toString().toFloat())
+                apply()
             }
-        })
+
+            Toast.makeText(this@CalibrationActivity, "All set.", Toast.LENGTH_SHORT)
+                .show()
+
+            finish()
+        }
     }
 }

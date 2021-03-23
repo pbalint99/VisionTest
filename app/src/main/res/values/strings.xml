@@ -2,4 +2,6 @@
     <string name="app_name">Vision Test</string>
     <string name="visual_acuity_test">Visual Acuity Test</string>
     <string name="width_of_screen">Width of screen in millimeters:</string>
+    <string name="device_distance_in_meters">Device distance in meters</string>
+    <string name="done">Done</string>
 </resources>

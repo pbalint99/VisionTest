@@ -1,10 +1,18 @@
 package hu.bme.mogi.android.visiontest.activities
 
+import android.content.ClipData.newUri
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.media.RingtoneManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.R
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +28,55 @@ class MainActivity : AppCompatActivity() {
         calibration_start.setOnClickListener{
             val intent = Intent(this, CalibrationActivity::class.java)
             startActivity(intent)
+        }
+
+//        if (Settings.System.canWrite(applicationContext))
+//        {
+//            // Do stuff here
+//        } else {
+//            val intent = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//                Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
+//            } else {
+//                TODO("VERSION.SDK_INT < M")
+//            }
+//            intent.data = Uri.parse("package:" + Activity().packageName)
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//            startActivity(intent)
+//        }
+        try {
+            if (checkSystemWritePermission()) {
+                setBrightness(255)
+            } else {
+                Toast.makeText(applicationContext, "Please allow modifying system settings.", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Log.i("settings", e.toString())
+            Toast.makeText(applicationContext, "Please allow modifying system settings.", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    fun setBrightness(brightness: Int) {
+
+        //constrain the value of brightness
+        var brightness = brightness
+        if (brightness < 0) brightness = 0 else if (brightness > 255) brightness = 255
+        val cResolver = this.applicationContext.contentResolver
+        Settings.System.putInt(cResolver, Settings.System.SCREEN_BRIGHTNESS, brightness)
+    }
+
+    private fun checkSystemWritePermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Settings.System.canWrite(applicationContext)) return true else openAndroidPermissionsMenu()
+        }
+        return false
+    }
+
+    private fun openAndroidPermissionsMenu() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
+            intent.data = Uri.parse("package:" + applicationContext.getPackageName())
+            applicationContext.startActivity(intent)
         }
     }
 

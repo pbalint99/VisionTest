@@ -41,7 +41,7 @@ class VATestActivity  : AppCompatActivity() {
     private var direction: Int = 0
 
     //private var results: BooleanArray = booleanArrayOf(false)
-    private var lastGood: Int = 0
+    private var lastGood: Int = ideiglenes.size-1
     private var mistakeMade: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {

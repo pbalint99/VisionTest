@@ -25,24 +25,16 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        contrast_start.setOnClickListener{
+            val intent = Intent(this, ContrastTestActivity::class.java)
+            startActivity(intent)
+        }
+
         calibration_start.setOnClickListener{
             val intent = Intent(this, CalibrationActivity::class.java)
             startActivity(intent)
         }
 
-//        if (Settings.System.canWrite(applicationContext))
-//        {
-//            // Do stuff here
-//        } else {
-//            val intent = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-//                Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
-//            } else {
-//                TODO("VERSION.SDK_INT < M")
-//            }
-//            intent.data = Uri.parse("package:" + Activity().packageName)
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//            startActivity(intent)
-//        }
         try {
             if (checkSystemWritePermission()) {
                 setBrightness(255)

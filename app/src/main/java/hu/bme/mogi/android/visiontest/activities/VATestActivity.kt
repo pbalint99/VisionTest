@@ -13,7 +13,8 @@ class VATestActivity  : AppCompatActivity() {
     private var level: Int = 0
     private var width: Int = 0
     private var dpWidth: Float = 0f
-    private var distance: Float = 0f
+    private var distance: Float = 6f
+    //Amerikai szabvány alapján:
     private val sixMSizes: FloatArray = floatArrayOf(
         87.266f,
         52.360f,
@@ -25,7 +26,23 @@ class VATestActivity  : AppCompatActivity() {
         7.272f,
         5.818f
     )
+    private val ideiglenes: IntArray = intArrayOf(
+        60,
+        36,
+        24,
+        18,
+        12,
+        9,
+        6,
+        5,
+        4
+    )
+
     private var direction: Int = 0
+
+    //private var results: BooleanArray = booleanArrayOf(false)
+    private var lastGood: Int = 0
+    private var mistakeMade: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +71,10 @@ class VATestActivity  : AppCompatActivity() {
 
     }
 
-    private fun changeImage() = if(level>sixMSizes.size-1) finish()
+    private fun changeImage() = if(level>sixMSizes.size-2) {
+        Toast.makeText(applicationContext,"Your result: 6/"+ideiglenes[lastGood].toString(),Toast.LENGTH_LONG).show()
+        finish()
+    }
     else {
         //Size
         val mmSize = sixMSizes[level] * distance / 6
@@ -78,8 +98,11 @@ class VATestActivity  : AppCompatActivity() {
     }
 
     private fun guess(dir: Int) {
-        if(dir==direction) Toast.makeText(applicationContext,"Correct",Toast.LENGTH_SHORT).show()
-        else Toast.makeText(applicationContext,"Wrong",Toast.LENGTH_SHORT).show()
+        if(dir!=direction && !mistakeMade) {
+            lastGood = if(level>0) level - 1
+            else 0
+            mistakeMade=true
+        }
         level++
         changeImage()
     }

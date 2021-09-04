@@ -17,10 +17,20 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/color_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/color_perception_test"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/va_start"
+        app:layout_constraintStart_toStartOf="@+id/va_start"
+        app:layout_constraintTop_toBottomOf="@+id/va_start" />
+
+    <Button
         android:id="@+id/calibration_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Calibrate"
+        android:text="@string/calibrate"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/va_start"
         app:layout_constraintStart_toStartOf="@+id/va_start"
@@ -30,7 +40,7 @@
         android:id="@+id/contrast_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Contrast Test"
+        android:text="@string/contrast_test"
         app:layout_constraintBottom_toTopOf="@+id/va_start"
         app:layout_constraintEnd_toEndOf="@+id/va_start"
         app:layout_constraintStart_toStartOf="@+id/va_start"

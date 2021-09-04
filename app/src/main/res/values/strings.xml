@@ -4,4 +4,7 @@
     <string name="width_of_screen">Width of screen in millimeters:</string>
     <string name="device_distance_in_meters">Device distance in meters</string>
     <string name="done">Done</string>
+    <string name="color_perception_test">Color Perception Test</string>
+    <string name="calibrate">Calibrate</string>
+    <string name="contrast_test">Contrast Test</string>
 </resources>

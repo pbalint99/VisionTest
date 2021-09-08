@@ -11,38 +11,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/visual_acuity_test"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/color_start"
+        app:layout_constraintEnd_toEndOf="@+id/color_start"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintStart_toStartOf="@+id/color_start"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.492" />
 
     <Button
         android:id="@+id/color_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
         android:text="@string/color_perception_test"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/va_start"
-        app:layout_constraintStart_toStartOf="@+id/va_start"
-        app:layout_constraintTop_toBottomOf="@+id/va_start" />
+        app:layout_constraintBottom_toTopOf="@+id/contrast_start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/calibration_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
         android:text="@string/calibrate"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/va_start"
-        app:layout_constraintStart_toStartOf="@+id/va_start"
-        app:layout_constraintTop_toBottomOf="@+id/va_start" />
+        app:layout_constraintEnd_toEndOf="@+id/color_start"
+        app:layout_constraintStart_toStartOf="@+id/color_start" />
 
     <Button
         android:id="@+id/contrast_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
         android:text="@string/contrast_test"
-        app:layout_constraintBottom_toTopOf="@+id/va_start"
-        app:layout_constraintEnd_toEndOf="@+id/va_start"
-        app:layout_constraintStart_toStartOf="@+id/va_start"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/calibration_start"
+        app:layout_constraintEnd_toEndOf="@+id/color_start"
+        app:layout_constraintStart_toStartOf="@+id/color_start" />
 </androidx.constraintlayout.widget.ConstraintLayout>

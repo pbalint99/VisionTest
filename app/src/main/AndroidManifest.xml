@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.VATestActivity" />
+        <activity android:name=".activities.ColorActivity" />
         <activity android:name=".activities.ContrastTestActivity" />
         <activity android:name=".activities.CalibrationActivity" />
     </application>

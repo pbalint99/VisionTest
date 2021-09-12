@@ -35,6 +35,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        color_start.setOnClickListener{
+            val intent = Intent(this, ColorActivity::class.java)
+            startActivity(intent)
+        }
+
         try {
             if (checkSystemWritePermission()) {
                 setBrightness(255)

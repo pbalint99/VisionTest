@@ -7,4 +7,5 @@
     <string name="color_perception_test">Color Perception Test</string>
     <string name="calibrate">Calibrate</string>
     <string name="contrast_test">Contrast Test</string>
+    <string name="start">Start</string>
 </resources>

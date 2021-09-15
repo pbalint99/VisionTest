@@ -20,27 +20,20 @@ import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
 
 class ColorActivity: AppCompatActivity() {
 
-    private var firstpressed: Boolean = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_color)
 
-        plusButton.setOnClickListener{
-            if(!firstpressed) {
-                plusButton.text="+"
-                ViewMover.move(dotView, noiseView, false)
-                noiseView.setImageBitmap(
-                    Noise.applyNoise(
-                        BitmapFactory.decodeResource(
-                            applicationContext.resources, R.drawable.black_square
-                        ), 300, 600
-                    )
+        plusButton.setOnClickListener {
+            plusButton.isEnabled = false
+            ViewMover.move(dotView, noiseView, false)
+            noiseView.setImageBitmap(
+                Noise.applyNoise(
+                    BitmapFactory.decodeResource(
+                        applicationContext.resources, R.drawable.black_square
+                    ), 300, 600
                 )
-                firstpressed=true
-            }
-            dotView.alpha+=0.01f
-
+            )
         }
 
         //Button Listeners:
@@ -63,56 +56,33 @@ class ColorActivity: AppCompatActivity() {
         val dotWidth = displayMetrics.widthPixels/5
         params.width = dotWidth
         params.height = dotWidth
-//        dotView.setColorFilter(Color.BLUE, PorterDuff.Mode.ADD)
 
-        val dotBitmap = Noise.applyNoiseCircle(
+        dotView.setImageBitmap(Noise.applyNoiseCircle(
             BitmapFactory.decodeResource(
                 applicationContext.resources, R.drawable.black_square
             ), 60
-        )
-//        radialMask(dotBitmap)
-//        val canvas = Canvas()
-//        val paint = Paint()
-//        canvas.drawBitmap(dotBitmap, 0f, 0f, paint)
-//        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
-//        canvas.drawBitmap(
-//            BitmapFactory.decodeResource(
-//                applicationContext.resources, R.drawable.pont
-//            ), 0f, 0f, paint
-//        )
-
-//        val shaderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-//        val gradient = RadialGradient((dotWidth/2).toFloat(), (dotWidth/2).toFloat(), (dotWidth/2).toFloat(),
-//            intArrayOf(-0x1, -0x1, 0x00FFFFFF), null, Shader.TileMode.CLAMP)
-//        canvas.drawBitmap(dotBitmap,0f,0f,shaderPaint)
-//        shaderPaint.shader=gradient
-        dotView.setImageBitmap(dotBitmap)
+        ))
 
     }
 
     //TODO: lépcsős fentről-lenntről megbecsülés
     private fun guess(dir: Int) {
         ViewMover.move(dotView, noiseView, false)
-    }
 
-//    private fun radialMask(imageToApplyMaskTo: Bitmap) {
-//        val canvas = Canvas(imageToApplyMaskTo)
-//
-//        val center = imageToApplyMaskTo.width * 0.5f
-//        val radius = imageToApplyMaskTo.height * 0.7f
-//        val gradient = RadialGradient(
-//            center, center, radius,
-//            Color.BLUE, Color.BLACK, Shader.TileMode.CLAMP
-//        )
-//        val p = Paint()
-//        p.shader = gradient
-//        p.color = 0x000000
-//        p.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
-//        canvas.drawRect(
-//            0f, 0f, imageToApplyMaskTo.width.toFloat(),
-//            imageToApplyMaskTo.height.toFloat(), p
-//        )
-//    }
+        noiseView.setImageBitmap(
+            Noise.applyNoise(
+                BitmapFactory.decodeResource(
+                    applicationContext.resources, R.drawable.black_square
+                ), 300, 600
+            )
+        )
+        dotView.setImageBitmap(
+            Noise.applyNoiseCircle(
+                BitmapFactory.decodeResource(
+                    applicationContext.resources, R.drawable.black_square
+            ), 60
+        ))
+    }
 
 
 }

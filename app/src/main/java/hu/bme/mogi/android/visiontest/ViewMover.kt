@@ -16,8 +16,12 @@ object ViewMover {
         val height = bigView.height
         val horWiggleRoom = (0.1f*width).toInt()
         val vertWiggleRoom = (0.1f*height).toInt()
+        var prevDir = intArrayOf(4,4)
 
-        val dir = (0..3).random()
+        var dir = (0..3).random()
+        while(dir==prevDir[0] && dir==prevDir[1]) {
+            dir = (0..3).random()
+        }
         when(dir) {
             0 -> {
                 loc[0] = widthMiddle - horWiggleRoom/2 + random.nextInt(horWiggleRoom)
@@ -36,6 +40,7 @@ object ViewMover {
                 loc[1] = heightMiddle - vertWiggleRoom/2 + random.nextInt(vertWiggleRoom)
             } //Left
         }
+        prevDir[1] = prevDir[0]; prevDir[0] = dir
         params.setMargins(
             loc[0],
             loc[1],

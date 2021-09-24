@@ -1,25 +1,17 @@
 package hu.bme.mogi.android.visiontest
 
 import android.graphics.*
-import android.widget.FrameLayout
-import android.widget.Toast
-import androidx.core.graphics.alpha
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import java.util.*
-import kotlin.math.abs
-import kotlin.math.pow
 
-
+//TODO: do this on a side thread?
 object Noise {
     const val colorWiggleRoom = 70f
     const val satWiggleRoom = 0.5f
-    const val circleColorDensity = 0.4f
+    const val circleColorDensity = 0.2f
     fun applyNoise(source: Bitmap, width: Int, height: Int, color: Float = -1f): Bitmap {
         // get source image size
         val pixels = IntArray(width * height)
-        var hsv: FloatArray = floatArrayOf(0f, 0f, 0f)
+        var hsv: FloatArray
         // get pixel array from source
         source.getPixels(pixels, 0, width, 0, 0, width, height)
         //if color is net set, set saturation to 0
@@ -27,7 +19,7 @@ object Noise {
         else 1f
         // create a random object
         val random = Random()
-        var index = 0
+        var index : Int
         // iteration through pixels
         for (y in 0 until height) {
             for (x in 0 until width) {
@@ -43,7 +35,7 @@ object Noise {
         return bmOut
     }
 
-    fun applyNoiseCircle(source: Bitmap, width: Int, color: Float, bgColor: Float = 0f): Bitmap {
+    fun applyNoiseCircle(source: Bitmap, width: Int, color: Float): Bitmap {
         // get source image size
         val pixels = IntArray(width * width)
         var hsv: FloatArray
@@ -52,7 +44,7 @@ object Noise {
         source.getPixels(pixels, 0, width, 0, 0, width, width)
         // create a random object
         val random = Random()
-        var index = 0
+        var index : Int
         // iteration through pixels
         for (y in 0 until width) {
             for (x in 0 until width) {

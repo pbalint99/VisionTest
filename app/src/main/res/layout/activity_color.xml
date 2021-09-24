@@ -51,68 +51,68 @@
         tools:visibility="visible" />
 
     <Button
-        android:id="@+id/upBtnC"
+        android:id="@+id/rightBtnC"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="0dp"
         android:background="#00FFFFFF"
         android:backgroundTint="#00FFFFFF"
-        android:text=""
-        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/downguideline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/vguideline"
+        app:layout_constraintTop_toTopOf="@+id/upguideline" />
 
     <Button
         android:id="@+id/leftBtnC"
-        android:layout_width="200dp"
-        android:layout_height="330dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#00FFFFFF"
         android:backgroundTint="#00FFFFFF"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/downguideline"
+        app:layout_constraintEnd_toStartOf="@+id/vguideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/upguideline" />
+
+    <Button
+        android:id="@+id/upBtnC"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#00FFFFFF"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/upguideline"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/downBtnC"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="0dp"
         android:background="#00FFFFFF"
         android:backgroundTint="#00FFFFFF"
-        android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/downguideline" />
 
-    <Button
-        android:id="@+id/rightBtnC"
-        android:layout_width="200dp"
-        android:layout_height="330dp"
-        android:background="#00FFFFFF"
-        android:backgroundTint="#00FFFFFF"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vguideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
-<!--    <SeekBar-->
-<!--        android:id="@+id/seekBar"-->
-<!--        android:layout_width="302dp"-->
-<!--        android:layout_height="45dp"-->
-<!--        android:layout_marginTop="528dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.651"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/upguideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.21" />
 
-<!--    <SeekBar-->
-<!--        android:id="@+id/seekBar2"-->
-<!--        android:layout_width="288dp"-->
-<!--        android:layout_height="32dp"-->
-<!--        android:layout_marginTop="1dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/seekBar" />-->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/downguideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.79" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

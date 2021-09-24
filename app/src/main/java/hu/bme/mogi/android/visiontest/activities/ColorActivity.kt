@@ -1,13 +1,15 @@
 package hu.bme.mogi.android.visiontest.activities
 
+import android.content.Context
 import android.graphics.*
+import android.hardware.display.DisplayManager
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.widget.SeekBar
+import android.view.Display
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat.getDisplay
 import hu.bme.mogi.android.visiontest.Noise
 import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
@@ -21,13 +23,14 @@ import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
 
 //TODO: background, dot unnecessary
 class ColorActivity: AppCompatActivity() {
-    var bgColor = 90f
-    var dotColor = 360f
+    var bgColor = floatArrayOf(90f,245f)
+    var dotColor = floatArrayOf(360f,65f)
     var prevDir = 5
     var level = 0
-    var results = BooleanArray(3)
+    var results = BooleanArray(10)
     private var aspectRatio = 0
     private var noiseDensity = 500
+    private var index = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +42,11 @@ class ColorActivity: AppCompatActivity() {
 
         //Set sizes
         val params = dotView.layoutParams
+
         val displayMetrics = DisplayMetrics()
+        @Suppress("DEPRECATION")
         windowManager.defaultDisplay.getMetrics(displayMetrics)
+
         val dotWidth = displayMetrics.widthPixels/5
         aspectRatio = displayMetrics.heightPixels/displayMetrics.widthPixels
         params.width = dotWidth
@@ -57,7 +63,7 @@ class ColorActivity: AppCompatActivity() {
             rightBtnC.isEnabled = true
             prevDir = ViewMover.move(dotView, noiseView, false)
 
-            applyNoises()
+            applyNoises(0)
         }
 
         //Button Listeners:
@@ -142,40 +148,43 @@ class ColorActivity: AppCompatActivity() {
     private fun guess(dir: Int) {
         results[level] = dir == prevDir
 
-        if(level>1) {
+        if(level == 9) {
             evaluate()
             return
+        }
+        if(level == 4) {
+            index++
         }
 
         prevDir = ViewMover.move(dotView, noiseView, false)
 
-        applyNoises()
+        applyNoises(index)
 
         level++
     }
 
     private fun evaluate() {
         var correct = 0
-        for (i in 0..2) {
-            if (results[i]) correct++
+        for (element in results) {
+            if (element) correct++
         }
-        Toast.makeText(applicationContext,"Your result is: "+correct+"/3",Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext,"Your result is: "+correct+"/"+results.size,Toast.LENGTH_SHORT).show()
         finish()
     }
 
-    private fun applyNoises() {
+    private fun applyNoises(index: Int) {
         noiseView.setImageBitmap(
             Noise.applyNoise(
                 BitmapFactory.decodeResource(
                     applicationContext.resources, R.drawable.black_square
-                ), noiseDensity, noiseDensity*aspectRatio, bgColor
+                ), noiseDensity, noiseDensity*aspectRatio, bgColor[index]
             )
         )
         dotView.setImageBitmap(
             Noise.applyNoiseCircle(
                 BitmapFactory.decodeResource(
                     applicationContext.resources, R.drawable.black_square
-                ), noiseDensity/8, dotColor, bgColor
+                ), noiseDensity/8, dotColor[index]
             )
         )
     }

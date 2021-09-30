@@ -2,9 +2,11 @@ package hu.bme.mogi.android.visiontest.activities
 
 import android.content.Context
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.R
+import hu.bme.mogi.android.visiontest.ViewMover
 import kotlinx.android.synthetic.main.activity_vatest.*
 import kotlin.math.roundToInt
 
@@ -26,7 +28,7 @@ class VATestActivity  : AppCompatActivity() {
         7.272f,
         5.818f
     )
-    private val ideiglenes: IntArray = intArrayOf(
+    private val distances: IntArray = intArrayOf(
         60,
         36,
         24,
@@ -39,9 +41,10 @@ class VATestActivity  : AppCompatActivity() {
     )
 
     private var direction: Int = 0
+    val displayMetrics = DisplayMetrics()
 
     //private var results: BooleanArray = booleanArrayOf(false)
-    private var lastGood: Int = ideiglenes.size-1
+    private var lastGood: Int = distances.size-1
     private var mistakeMade: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,9 +52,10 @@ class VATestActivity  : AppCompatActivity() {
         setContentView(R.layout.activity_vatest)
 
         val sharedPref = getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return
-        width = sharedPref.getInt("width", 80)
-        dpWidth = sharedPref.getFloat("dpWidth", 400f)
         distance = sharedPref.getFloat("distance", 6f)
+
+        @Suppress("DEPRECATION")
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
 
         changeImage()
 
@@ -72,15 +76,15 @@ class VATestActivity  : AppCompatActivity() {
     }
 
     private fun changeImage() = if(level>sixMSizes.size-2) {
-        Toast.makeText(applicationContext,"Your result: 6/"+ideiglenes[lastGood].toString(),Toast.LENGTH_LONG).show()
+        Toast.makeText(applicationContext,"Your result: 6/"+distances[lastGood].toString(),Toast.LENGTH_LONG).show()
         finish()
     }
     else {
         //Size
         val mmSize = sixMSizes[level] * distance / 6
-        val pixelSize = (dpWidth * mmSize / width)
         ivSnellen.requestLayout()
-        ivSnellen.layoutParams.width = dpToPx(pixelSize, applicationContext)
+        ivSnellen.layoutParams.width = ViewMover.mmToPixels(mmSize, displayMetrics)
+        //TODO: Nem sin, tg!!!
 
         //Direction
         direction=(0..3).random()
@@ -90,11 +94,6 @@ class VATestActivity  : AppCompatActivity() {
             2 -> ivSnellen.rotation=90f //Down
             else -> ivSnellen.rotation=180f //Left
         }
-    }
-
-    fun dpToPx(dp: Float, context: Context): Int {
-        val density = context.resources.displayMetrics.density
-        return (dp * density).roundToInt()
     }
 
     private fun guess(dir: Int) {

@@ -2,14 +2,10 @@ package hu.bme.mogi.android.visiontest.activities
 
 import android.content.Context
 import android.graphics.*
-import android.hardware.display.DisplayManager
-import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.Display
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat.getDisplay
 import hu.bme.mogi.android.visiontest.Noise
 import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
@@ -21,16 +17,19 @@ import kotlinx.android.synthetic.main.activity_contrasttest.plusButton
 import kotlinx.android.synthetic.main.activity_contrasttest.rightBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
 
-//TODO: background, dot unnecessary
+//TODO: disable rotation
 class ColorActivity: AppCompatActivity() {
     var bgColor = floatArrayOf(90f,245f)
     var dotColor = floatArrayOf(360f,65f)
     var prevDir = 5
     var level = 0
     var results = BooleanArray(10)
-    private var aspectRatio = 0
+    private var aspectRatio = 0f
     private var noiseDensity = 500
     private var index = 0
+
+    private var width = 1
+    private var distance = 1f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,16 +40,17 @@ class ColorActivity: AppCompatActivity() {
         rightBtnC.isEnabled = false
 
         //Set sizes
-        val params = dotView.layoutParams
+        val dotParams = dotView.layoutParams
 
         val displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION")
         windowManager.defaultDisplay.getMetrics(displayMetrics)
 
-        val dotWidth = displayMetrics.widthPixels/5
-        aspectRatio = displayMetrics.heightPixels/displayMetrics.widthPixels
-        params.width = dotWidth
-        params.height = dotWidth
+        val dotWidth = ViewMover.degreeToPixels(2.0,displayMetrics,getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return)
+        aspectRatio = displayMetrics.widthPixels.toFloat()/displayMetrics.heightPixels
+        dotParams.width = dotWidth
+        dotParams.height = dotWidth
+
 
         plusButton.setOnClickListener {
             plusButton.isEnabled = false
@@ -142,8 +142,6 @@ class ColorActivity: AppCompatActivity() {
 
     }
 
-    //TODO: lépcsős fentről-lenntről megbecsülés
-
     //TODO: Ötlet: hol NINCS pötty?
     private fun guess(dir: Int) {
         results[level] = dir == prevDir
@@ -173,11 +171,12 @@ class ColorActivity: AppCompatActivity() {
     }
 
     private fun applyNoises(index: Int) {
+        //Toast.makeText(applicationContext,noiseDensity.toString()+" "+(noiseDensity*aspectRatio).toInt().toString(),Toast.LENGTH_SHORT).show()
         noiseView.setImageBitmap(
             Noise.applyNoise(
                 BitmapFactory.decodeResource(
                     applicationContext.resources, R.drawable.black_square
-                ), noiseDensity, noiseDensity*aspectRatio, bgColor[index]
+                ), noiseDensity, (noiseDensity*aspectRatio).toInt(), bgColor[index]
             )
         )
         dotView.setImageBitmap(
@@ -188,4 +187,6 @@ class ColorActivity: AppCompatActivity() {
             )
         )
     }
+
+
 }

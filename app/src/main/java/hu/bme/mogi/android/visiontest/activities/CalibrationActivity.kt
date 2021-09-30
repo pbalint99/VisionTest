@@ -18,15 +18,15 @@ class CalibrationActivity: AppCompatActivity() {
 
         doneBtn.setOnClickListener{
             val displayMetrics: DisplayMetrics = applicationContext.resources.displayMetrics
-            val dpWidth: Float = displayMetrics.widthPixels / displayMetrics.density
+            val pWidth = displayMetrics.widthPixels
 
             val sharedPref = applicationContext.getSharedPreferences(
                 "sp",
                 Context.MODE_PRIVATE
             )
             with(sharedPref.edit()) {
-                putInt("width", etWidth.text.toString().toInt())
-                putFloat("dpWidth",dpWidth)
+//                putInt("width", etWidth.text.toString().toInt())
+//                putInt("pixelWidth",pWidth)
                 putFloat("distance",etDistance.text.toString().toFloat())
                 apply()
             }

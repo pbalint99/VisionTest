@@ -2,6 +2,7 @@ package hu.bme.mogi.android.visiontest.activities
 
 import android.content.ClipData.newUri
 import android.content.Intent
+import android.graphics.Point
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -50,7 +51,9 @@ class MainActivity : AppCompatActivity() {
             Log.i("settings", e.toString())
             Toast.makeText(applicationContext, "Please allow modifying system settings.", Toast.LENGTH_SHORT).show()
         }
-
+        var size = Point()
+        display?.getRealSize(size)
+        Toast.makeText(applicationContext,size.x.toString()+" "+size.y.toString(),Toast.LENGTH_SHORT).show()
     }
 
     fun setBrightness(brightness: Int) {

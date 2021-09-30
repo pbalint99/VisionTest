@@ -1,15 +1,16 @@
 package hu.bme.mogi.android.visiontest.activities
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.Noise
 import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
-import kotlinx.android.synthetic.main.activity_color.*
 import kotlinx.android.synthetic.main.activity_contrasttest.*
 import kotlinx.android.synthetic.main.activity_contrasttest.downBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.leftBtnC
@@ -22,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
 class ContrastTestActivity: AppCompatActivity() {
 //    var tryNumber: Int = 1
 //    var results: FloatArray = floatArrayOf(0f, 0f, 0f)
+    //TODO: apply aspect ratio to noise
     private var firstpressed: Boolean = false
     var prevDir = 5
     var level = 0
@@ -71,8 +73,19 @@ class ContrastTestActivity: AppCompatActivity() {
 
         setFrequency(freq)
 
+        //set size
+        val displayMetrics = DisplayMetrics()
+        @Suppress("DEPRECATION")
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val gaussParams = gaussView.layoutParams
+        val gaussWidth = ViewMover.degreeToPixels(2.0, displayMetrics,getSharedPreferences("sp", Context.MODE_PRIVATE))
+        //Toast.makeText(applicationContext,gaussWidth.toString(),Toast.LENGTH_SHORT).show()
+        gaussParams.width = gaussWidth
+        gaussParams.height = gaussWidth
+
     }
 
+    //TODO: Tidy this
     private fun setFrequency(freq: Float){
         val source = BitmapFactory.decodeResource(
             applicationContext.resources,
@@ -82,8 +95,6 @@ class ContrastTestActivity: AppCompatActivity() {
         val height = source.height
         val pixels = IntArray(width * height)
         var hsv: FloatArray
-        // get pixel array from source
-        source.getPixels(pixels, 0, width, 0, 0, width, height)
 
         var index = 0
         for (y in 0 until height) {
@@ -95,10 +106,7 @@ class ContrastTestActivity: AppCompatActivity() {
                     0f,
                     Math.sin(Math.PI * 2 * x.toDouble() / (width / freq)).toFloat() / 2 + 0.5f
                 )
-                val randColor: Int = Color.HSVToColor(hsv)
-                // "OR" the two variables
-                pixels[index] = pixels[index] or randColor
-                //TODO: or nem kell
+                pixels[index] = Color.HSVToColor(hsv)
             }
         }
 

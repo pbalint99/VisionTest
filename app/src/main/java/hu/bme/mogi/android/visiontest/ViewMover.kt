@@ -1,11 +1,18 @@
 package hu.bme.mogi.android.visiontest
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.DisplayMetrics
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.activity_contrasttest.*
 import java.util.*
+import kotlin.math.sin
 
 object ViewMover {
+    var density: Float = 0f
+    var distance: Float = 0f
+
     fun move(viewToMove: View, bigView: View, rotate: Boolean): Int {
         val params = viewToMove.layoutParams as ConstraintLayout.LayoutParams
         val random = Random()
@@ -51,5 +58,17 @@ object ViewMover {
         if(rotate) viewToMove.rotation=random.nextInt(360).toFloat()
 
         return dir
+    }
+
+    fun degreeToPixels(deg: Double = 2.0, dm: DisplayMetrics, sp: SharedPreferences) : Int {
+        distance = sp.getFloat("distance", 1f)
+        val mmSize = sin(Math.toRadians(deg)) * distance * 1000
+        //val mmScreenWidth = 25.4f*1.05f*dm.widthPixels/dm.xdpi
+        //return intArrayOf(((mmSize*dm.xdpi)/(25.4*1.05f)).toInt(),mmSize.toInt())
+        return ((mmSize*dm.xdpi)/(25.4*1.05f)).toInt()
+    }
+
+    fun mmToPixels(mmSize: Float = 10f, dm: DisplayMetrics) : Int {
+        return ((mmSize*dm.xdpi)/(25.4*1.05f)).toInt()
     }
 }

@@ -1,9 +1,11 @@
 package hu.bme.mogi.android.visiontest.activities
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.*
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.KeyEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.Noise
@@ -28,16 +30,9 @@ class ColorActivity: AppCompatActivity() {
     private var noiseDensity = 500
     private var index = 0
 
-    private var width = 1
-    private var distance = 1f
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_color)
-        upBtnC.isEnabled = false
-        downBtnC.isEnabled = false
-        leftBtnC.isEnabled = false
-        rightBtnC.isEnabled = false
 
         //Set sizes
         val dotParams = dotView.layoutParams
@@ -56,29 +51,31 @@ class ColorActivity: AppCompatActivity() {
             plusButton.isEnabled = false
             plusButton.text = ""
             plusButton.setBackgroundColor(Color.TRANSPARENT)
+            if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+                upBtnC.isEnabled = true
+                downBtnC.isEnabled = true
+                leftBtnC.isEnabled = true
+                rightBtnC.isEnabled = true
+                Toast.makeText(applicationContext,"Hello",Toast.LENGTH_SHORT).show()
+                upBtnC.setOnClickListener{
+                    guess(0)
+                }
+                rightBtnC.setOnClickListener{
+                    guess(1)
+                }
+                downBtnC.setOnClickListener{
+                    guess(2)
+                }
+                leftBtnC.setOnClickListener{
+                    guess(3)
+                }
+            }
 
-            upBtnC.isEnabled = true
-            downBtnC.isEnabled = true
-            leftBtnC.isEnabled = true
-            rightBtnC.isEnabled = true
             prevDir = ViewMover.move(dotView, noiseView, false)
 
             applyNoises(0)
         }
 
-        //Button Listeners:
-        upBtnC.setOnClickListener{
-            guess(0)
-        }
-        rightBtnC.setOnClickListener{
-            guess(1)
-        }
-        downBtnC.setOnClickListener{
-            guess(2)
-        }
-        leftBtnC.setOnClickListener{
-            guess(3)
-        }
         //Seekbars:
 //        seekBar?.setOnSeekBarChangeListener(object :
 //            SeekBar.OnSeekBarChangeListener {
@@ -187,6 +184,39 @@ class ColorActivity: AppCompatActivity() {
             )
         )
     }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                guess(0)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                guess(1)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                guess(2)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                guess(3)
+                true
+            }
+            KeyEvent.KEYCODE_ESCAPE -> {
+                true
+            }
+            KeyEvent.KEYCODE_ENTER -> {
+                true
+            }
+            KeyEvent.KEYCODE_SPACE -> {
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
+        }
+    }
+
+
 
 
 }

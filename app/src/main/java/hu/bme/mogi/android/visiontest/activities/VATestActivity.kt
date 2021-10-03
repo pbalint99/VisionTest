@@ -3,6 +3,7 @@ package hu.bme.mogi.android.visiontest.activities
 import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.KeyEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.R
@@ -73,6 +74,7 @@ class VATestActivity  : AppCompatActivity() {
             guess(3)
         }
 
+
     }
 
     private fun changeImage() = if(level>sixMSizes.size-2) {
@@ -84,7 +86,6 @@ class VATestActivity  : AppCompatActivity() {
         val mmSize = sixMSizes[level] * distance / 6
         ivSnellen.requestLayout()
         ivSnellen.layoutParams.width = ViewMover.mmToPixels(mmSize, displayMetrics)
-        //TODO: Nem sin, tg!!!
 
         //Direction
         direction=(0..3).random()
@@ -105,5 +106,91 @@ class VATestActivity  : AppCompatActivity() {
         level++
         changeImage()
     }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                guess(0)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                guess(1)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                guess(2)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                guess(3)
+                true
+            }
+            KeyEvent.KEYCODE_ESCAPE -> {
+                true
+            }
+            KeyEvent.KEYCODE_ENTER -> {
+                true
+            }
+            KeyEvent.KEYCODE_SPACE -> {
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
+        }
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                true
+            }
+            KeyEvent.KEYCODE_ESCAPE -> {
+                true
+            }
+            KeyEvent.KEYCODE_ENTER -> {
+                true
+            }
+            KeyEvent.KEYCODE_SPACE -> {
+                true
+            }
+            else -> super.onKeyUp(keyCode, event)
+        }
+    }
+
+    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                true
+            }
+            KeyEvent.KEYCODE_ESCAPE -> {
+                true
+            }
+            KeyEvent.KEYCODE_ENTER -> {
+                true
+            }
+            KeyEvent.KEYCODE_SPACE -> {
+                true
+            }
+            else -> super.onKeyLongPress(keyCode, event)
+        }
+    }
+
 
 }

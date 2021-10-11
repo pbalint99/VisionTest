@@ -15,17 +15,17 @@ import kotlinx.android.synthetic.main.activity_color.*
 import kotlinx.android.synthetic.main.activity_contrasttest.downBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.leftBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.noiseView
-import kotlinx.android.synthetic.main.activity_contrasttest.plusButton
+import kotlinx.android.synthetic.main.activity_contrasttest.startButton
 import kotlinx.android.synthetic.main.activity_contrasttest.rightBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
 
 //TODO: disable rotation
 class ColorActivity: AppCompatActivity() {
-    var bgColor = floatArrayOf(90f,245f)
-    var dotColor = floatArrayOf(360f,65f)
+    var bgColor = floatArrayOf(57f,245f) //Ishihara: 57f
+    var dotColor = floatArrayOf(31f,65f) //Ishihara:31f
     var prevDir = 5
     var level = 0
-    var results = BooleanArray(10)
+    var guesses = BooleanArray(5)
     private var aspectRatio = 0f
     private var noiseDensity = 500
     private var index = 0
@@ -47,10 +47,10 @@ class ColorActivity: AppCompatActivity() {
         dotParams.height = dotWidth
 
 
-        plusButton.setOnClickListener {
-            plusButton.isEnabled = false
-            plusButton.text = ""
-            plusButton.setBackgroundColor(Color.TRANSPARENT)
+        startButton.setOnClickListener {
+            startButton.isEnabled = false
+            startButton.text = ""
+            startButton.setBackgroundColor(Color.TRANSPARENT)
             if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
                 upBtnC.isEnabled = true
                 downBtnC.isEnabled = true
@@ -141,15 +141,15 @@ class ColorActivity: AppCompatActivity() {
 
     //TODO: Ötlet: hol NINCS pötty?
     private fun guess(dir: Int) {
-        results[level] = dir == prevDir
+        guesses[level] = dir == prevDir
 
-        if(level == 9) {
+        if(level == 4) {
             evaluate()
             return
         }
-        if(level == 4) {
-            index++
-        }
+//        if(level == 4) {
+//            index++
+//        }
 
         prevDir = ViewMover.move(dotView, noiseView, false)
 
@@ -160,11 +160,12 @@ class ColorActivity: AppCompatActivity() {
 
     private fun evaluate() {
         var correct = 0
-        for (element in results) {
+        for (element in guesses) {
             if (element) correct++
         }
-        Toast.makeText(applicationContext,"Your result is: "+correct+"/"+results.size,Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext,"Your result is: "+correct+"/"+guesses.size,Toast.LENGTH_SHORT).show()
         finish()
+
     }
 
     private fun applyNoises(index: Int) {
@@ -215,8 +216,5 @@ class ColorActivity: AppCompatActivity() {
             else -> super.onKeyDown(keyCode, event)
         }
     }
-
-
-
 
 }

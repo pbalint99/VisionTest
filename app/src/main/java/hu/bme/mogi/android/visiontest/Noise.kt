@@ -6,14 +6,14 @@ import java.util.*
 //TODO: do this on a side thread?
 //Use other createbitmap method, which takes a color array
 object Noise {
-    const val colorWiggleRoom = 70f
+    const val colorWiggleRoom = 30f
     const val satWiggleRoom = 0.5f
-    const val circleColorDensity = 0.2f
+    const val circleColorDensity = 0.3f
 
     fun applyNoise(source: Bitmap, width: Int, height: Int, color: Float = -1f): Bitmap {
         val pixels = IntArray(width * height)
         var hsv: FloatArray
-        //if color is net set, set saturation to 0
+        //if color is not set, set saturation to 0
         val sat = if(color == -1f) 0f
         else 1f
         val random = Random()
@@ -22,6 +22,7 @@ object Noise {
         for (y in 0 until height) {
             for (x in 0 until width) {
                 hsv= floatArrayOf(color-colorWiggleRoom/2+colorWiggleRoom*random.nextFloat(), sat - satWiggleRoom*random.nextFloat(), random.nextFloat())
+                //hsv= floatArrayOf(0.10770f,  2.85526f,  0.99940f)
                 pixels[index] = Color.HSVToColor(hsv)
                 index++
             }

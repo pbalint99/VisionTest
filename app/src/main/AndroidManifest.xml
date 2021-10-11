@@ -3,6 +3,8 @@
     package="hu.bme.mogi.android.visiontest">
 
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -21,6 +23,7 @@
         <activity android:name=".activities.ColorActivity" />
         <activity android:name=".activities.ContrastTestActivity" />
         <activity android:name=".activities.CalibrationActivity" />
+        <activity android:name=".activities.SaveActivity" />
     </application>
 
 </manifest>

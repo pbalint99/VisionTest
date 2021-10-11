@@ -1,9 +1,9 @@
 package hu.bme.mogi.android.visiontest.activities
 
-import android.content.ClipData.newUri
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Intent
 import android.graphics.Point
-import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -45,15 +45,26 @@ class MainActivity : AppCompatActivity() {
             if (checkSystemWritePermission()) {
                 setBrightness(255)
             } else {
-                Toast.makeText(applicationContext, "Please allow modifying system settings.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    "Please allow modifying system settings.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } catch (e: Exception) {
             Log.i("settings", e.toString())
-            Toast.makeText(applicationContext, "Please allow modifying system settings.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                applicationContext,
+                "Please allow modifying system settings.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
-        var size = Point()
+        val size = Point()
         display?.getRealSize(size)
-        Toast.makeText(applicationContext,size.x.toString()+" "+size.y.toString(),Toast.LENGTH_SHORT).show()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 1)
+        }
     }
 
     fun setBrightness(brightness: Int) {
@@ -79,6 +90,5 @@ class MainActivity : AppCompatActivity() {
             applicationContext.startActivity(intent)
         }
     }
-
 
 }

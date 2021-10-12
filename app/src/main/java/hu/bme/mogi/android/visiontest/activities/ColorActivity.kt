@@ -29,6 +29,7 @@ class ColorActivity: AppCompatActivity() {
     private var aspectRatio = 0f
     private var noiseDensity = 500
     private var index = 0
+    var displayMetrics = DisplayMetrics()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +38,8 @@ class ColorActivity: AppCompatActivity() {
         //Set sizes
         val dotParams = dotView.layoutParams
 
-        val displayMetrics = DisplayMetrics()
+        //TODO: kell ez?
+        displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION")
         windowManager.defaultDisplay.getMetrics(displayMetrics)
 
@@ -76,70 +78,8 @@ class ColorActivity: AppCompatActivity() {
             applyNoises(0)
         }
 
-        //Seekbars:
-//        seekBar?.setOnSeekBarChangeListener(object :
-//            SeekBar.OnSeekBarChangeListener {
-//            override fun onProgressChanged(seek: SeekBar,
-//                                           progress: Int, fromUser: Boolean) {
-//                // write custom code for progress is changed
-//            }
-//
-//            override fun onStartTrackingTouch(seek: SeekBar) {
-//                // write custom code for progress is started
-//            }
-//
-//            override fun onStopTrackingTouch(seek: SeekBar) {
-//                // write custom code for progress is stopped
-//                bgColor=60f+seekBar.progress
-//                noiseView.setImageBitmap(
-//                    Noise.applyNoise(
-//                        BitmapFactory.decodeResource(
-//                            applicationContext.resources, R.drawable.background
-//                        ), noiseDensity, noiseDensity*aspectRatio, bgColor
-//                    )
-//                )
-//                dotView.setImageBitmap(Noise.applyNoiseCircle(
-//                    BitmapFactory.decodeResource(
-//                        applicationContext.resources, R.drawable.dot
-//                    ), noiseDensity/10, dotColor, bgColor
-//                ))
-//                ViewMover.move(dotView, noiseView, false)
-//            }
-//        })
-//        seekBar2?.setOnSeekBarChangeListener(object :
-//            SeekBar.OnSeekBarChangeListener {
-//            override fun onProgressChanged(seek: SeekBar,
-//                                           progress: Int, fromUser: Boolean) {
-//                // write custom code for progress is changed
-//            }
-//
-//            override fun onStartTrackingTouch(seek: SeekBar) {
-//                // write custom code for progress is started
-//            }
-//
-//            override fun onStopTrackingTouch(seek: SeekBar) {
-//                // write custom code for progress is stopped
-//                dotColor=260f+seekBar.progress
-//                noiseView.setImageBitmap(
-//                    Noise.applyNoise(
-//                        BitmapFactory.decodeResource(
-//                            applicationContext.resources, R.drawable.background
-//                        ), noiseDensity, noiseDensity*aspectRatio, bgColor
-//                    )
-//                )
-//                dotView.setImageBitmap(Noise.applyNoiseCircle(
-//                    BitmapFactory.decodeResource(
-//                        applicationContext.resources, R.drawable.dot
-//                    ), noiseDensity/10, dotColor, bgColor
-//                ))
-//                ViewMover.move(dotView, noiseView, false)
-//            }
-//        })
-
-
     }
 
-    //TODO: Ötlet: hol NINCS pötty?
     private fun guess(dir: Int) {
         guesses[level] = dir == prevDir
 
@@ -174,7 +114,7 @@ class ColorActivity: AppCompatActivity() {
             Noise.applyNoise(
                 BitmapFactory.decodeResource(
                     applicationContext.resources, R.drawable.black_square
-                ), noiseDensity, (noiseDensity*aspectRatio).toInt(), bgColor[index]
+                ), noiseDensity, (noiseDensity*aspectRatio).toInt(), bgColor[index], displayMetrics, 200
             )
         )
         dotView.setImageBitmap(

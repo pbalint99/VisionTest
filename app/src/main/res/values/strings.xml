@@ -7,6 +7,10 @@
     <string name="color_perception_test">Color Perception Test</string>
     <string name="calibrate">Calibrate</string>
     <string name="contrast_test">Contrast Test</string>
-    <string name="start">Start</string>
+    <string name="start_keyboard">Press SPACE to start</string>
     <string name="name">Name</string>
+    <string name="find">Find which side the image is on.\nThe image:</string>
+    <string name="start">Start</string>
+    <string name="can_t_see_it">Can\'t see it</string>
+    <string name="arrow">arrow</string>
 </resources>

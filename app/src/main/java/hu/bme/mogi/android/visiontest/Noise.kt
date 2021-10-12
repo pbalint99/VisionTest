@@ -1,6 +1,7 @@
 package hu.bme.mogi.android.visiontest
 
 import android.graphics.*
+import android.util.DisplayMetrics
 import java.util.*
 
 //TODO: do this on a side thread?
@@ -10,25 +11,30 @@ object Noise {
     const val satWiggleRoom = 0.5f
     const val circleColorDensity = 0.3f
 
-    fun applyNoise(source: Bitmap, width: Int, height: Int, color: Float = -1f): Bitmap {
-        val pixels = IntArray(width * height)
+    //TODO: noise density absed on distance?
+    fun applyNoise(source: Bitmap, width: Int, height: Int, color: Float = -1f, displayMetrics: DisplayMetrics, density: Int): Bitmap {
         var hsv: FloatArray
         //if color is not set, set saturation to 0
         val sat = if(color == -1f) 0f
         else 1f
         val random = Random()
         var index = 0
+        val aspectRatio = displayMetrics.widthPixels.toFloat()/displayMetrics.heightPixels
+        val width2= (displayMetrics.density*density).toInt()
+        val height2 = (displayMetrics.density*density*aspectRatio).toInt()
+        val pixels = IntArray(width2 * height2)
 
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                hsv= floatArrayOf(color-colorWiggleRoom/2+colorWiggleRoom*random.nextFloat(), sat - satWiggleRoom*random.nextFloat(), random.nextFloat())
-                //hsv= floatArrayOf(0.10770f,  2.85526f,  0.99940f)
+        for (y in 0 until height2) {
+            for (x in 0 until width2) {
+                hsv= floatArrayOf(color-colorWiggleRoom/2+colorWiggleRoom*random.nextFloat(),
+                    sat - satWiggleRoom*random.nextFloat(), random.nextFloat())
                 pixels[index] = Color.HSVToColor(hsv)
                 index++
             }
         }
-        return Bitmap.createBitmap(pixels, width, height, source.config)
+        return Bitmap.createBitmap(pixels, width2, height2, source.config)
     }
+
 
     fun applyNoiseCircle(source: Bitmap, width: Int, color: Float): Bitmap {
         // get source image size

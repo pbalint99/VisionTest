@@ -2,16 +2,25 @@ package hu.bme.mogi.android.visiontest.activities
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
 import kotlinx.android.synthetic.main.activity_vatest.*
 import hu.bme.mogi.android.visiontest.File
-import kotlinx.android.synthetic.main.activity_contrasttest.*
+import kotlinx.android.synthetic.main.activity_vatest.downArrow
+import kotlinx.android.synthetic.main.activity_vatest.ivSnellen
+import kotlinx.android.synthetic.main.activity_vatest.leftArrow
+import kotlinx.android.synthetic.main.activity_vatest.rightArrow
+import kotlinx.android.synthetic.main.activity_vatest.upArrow
+import kotlinx.android.synthetic.main.activity_vatest_keyboard.*
 
 
 class VATestActivity  : AppCompatActivity() {
@@ -20,6 +29,11 @@ class VATestActivity  : AppCompatActivity() {
     private var firstRoundGuesses = 9
     private var allGuesses = 0
     private var distance: Float = 6f
+    private var prevDir = IntArray(2)
+    private var firstGuess = true
+    private var keyboardConnected = true
+    private lateinit var passButton: MenuItem
+    private lateinit var menuText: MenuItem
 
     //Amerikai szabvány alapján:
     private val sixMSizes: FloatArray = floatArrayOf(
@@ -54,37 +68,39 @@ class VATestActivity  : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_vatest)
+        //setContentView(R.layout.activity_vatest)
 
         val sharedPref = getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return
         distance = sharedPref.getFloat("distance", 6f)
+
+        if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+            setContentView(R.layout.activity_vatest)
+
+            upBtn.setOnClickListener{
+                guess(0)
+            }
+            rightBtn.setOnClickListener{
+                guess(1)
+            }
+            downBtn.setOnClickListener{
+                guess(2)
+            }
+            leftBtn.setOnClickListener{
+                guess(3)
+            }
+
+            keyboardConnected = false
+        }
+        else setContentView(R.layout.activity_vatest_keyboard)
 
         @Suppress("DEPRECATION")
         windowManager.defaultDisplay.getMetrics(displayMetrics)
 
         changeImage()
 
-        if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
-            upBtnC.isEnabled = true
-            downBtnC.isEnabled = true
-            leftBtnC.isEnabled = true
-            rightBtnC.isEnabled = true
-            //Toast.makeText(applicationContext,"Hello",Toast.LENGTH_SHORT).show()
-            upBtnC.setOnClickListener{
-                guess(0)
-            }
-            rightBtnC.setOnClickListener{
-                guess(1)
-            }
-            downBtnC.setOnClickListener{
-                guess(2)
-            }
-            leftBtnC.setOnClickListener{
-                guess(3)
-            }
-        }
-
         results = intArrayOf(4,4)
+        prevDir = intArrayOf(4,4)
+
     }
 
     private fun changeImage() {
@@ -95,15 +111,42 @@ class VATestActivity  : AppCompatActivity() {
 
         //Direction
         direction=(0..3).random()
+        while(direction==prevDir[0] && direction==prevDir[1]) {
+            direction = (0..3).random()
+        }
         when (direction) {
             0 -> ivSnellen.rotation = 270f //Up
             1 -> ivSnellen.rotation = 0f //Right
             2 -> ivSnellen.rotation = 90f //Down
             else -> ivSnellen.rotation=180f //Left
         }
+        prevDir[1] = prevDir[0]; prevDir[0] = direction
     }
 
+    //TODO: bug if pressing wrong 4 times
     private fun guess(dir: Int) {
+        if(firstGuess) {
+            if(!keyboardConnected){
+                upArrow.visibility = View.GONE
+                rightArrow.visibility = View.GONE
+                downArrow.visibility = View.GONE
+                leftArrow.visibility = View.GONE
+                upBtn.setBackgroundColor(Color.TRANSPARENT)
+                rightBtn.setBackgroundColor(Color.TRANSPARENT)
+                downBtn.setBackgroundColor(Color.TRANSPARENT)
+                leftBtn.setBackgroundColor(Color.TRANSPARENT)
+            } else {
+                upArrow.visibility = View.GONE
+                rightArrow.visibility = View.GONE
+                downArrow.visibility = View.GONE
+                leftArrow.visibility = View.GONE
+                upArrowBox.visibility = View.GONE
+                rightArrowBox.visibility = View.GONE
+                downArrowBox.visibility = View.GONE
+                leftArrowBox.visibility = View.GONE
+            }
+            firstGuess = false
+        }
         if(dir==direction) {
             guesses[level + doneOnce * firstRoundGuesses] = true
         }
@@ -173,6 +216,25 @@ class VATestActivity  : AppCompatActivity() {
         finish()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        if (menu != null) {
+            passButton = menu.getItem(1)
+            menuText = menu.getItem(0)
+        }
+        menuText.isVisible=true
+        if(!keyboardConnected) {
+            menuText.title = "Can't see:"
+            passButton.isVisible=true
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        guess(4)
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_UP -> {
@@ -204,22 +266,5 @@ class VATestActivity  : AppCompatActivity() {
             else -> super.onKeyDown(keyCode, event)
         }
     }
-
-//    fun writeFileOnInternalStorage(mcoContext: Context, sFileName: String, sBody: String?) {
-//        val dir: File =
-//            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-//        if (!dir.exists()) {
-//            dir.mkdir()
-//        }
-//        try {
-//            val gpxfile = File(dir, sFileName)
-//            val writer = FileWriter(gpxfile)
-//            writer.append(sBody)
-//            writer.flush()
-//            writer.close()
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
-//    }
 
 }

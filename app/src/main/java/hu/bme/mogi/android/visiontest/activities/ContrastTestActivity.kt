@@ -8,21 +8,22 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.File
-import hu.bme.mogi.android.visiontest.Noise
 import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
 import kotlinx.android.synthetic.main.activity_contrasttest.*
-import kotlinx.android.synthetic.main.activity_contrasttest.downBtnC
-import kotlinx.android.synthetic.main.activity_contrasttest.leftBtnC
+import kotlinx.android.synthetic.main.activity_contrasttest.demoView
+import kotlinx.android.synthetic.main.activity_contrasttest.gaussView
 import kotlinx.android.synthetic.main.activity_contrasttest.noiseView
-import kotlinx.android.synthetic.main.activity_contrasttest.startButton
-import kotlinx.android.synthetic.main.activity_contrasttest.rightBtnC
-import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
+import kotlinx.android.synthetic.main.activity_contrasttest.textView
+import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 
 class ContrastTestActivity: AppCompatActivity() {
@@ -34,32 +35,20 @@ class ContrastTestActivity: AppCompatActivity() {
     var guesses = BooleanArray(6)
     var alphas = FloatArray(6)
     var frequencies = FloatArray(6)
-    var alpha = 0.4f//0.15f
-    var freq = 4f//7f
-
+    var alpha = 0.15f
+    var freq = 7f
+    var started = false
+    var displayMetrics = DisplayMetrics()
+    var noiseNumber = 0
+    var keyboardConnected = true
+    lateinit var passButton : MenuItem
+    lateinit var menuText : MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_contrasttest)
-
-        gaussView.alpha=0f
-
-        startButton.setOnClickListener{
-            prevDir = ViewMover.move(gaussView, noiseView, true)
-            applyNoise()
-            gaussView.alpha = alpha
-
-            startButton.isEnabled=false
-            startButton.setBackgroundColor(Color.TRANSPARENT)
-        }
-
 
         if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
-            upBtnC.isEnabled = true
-            downBtnC.isEnabled = true
-            leftBtnC.isEnabled = true
-            rightBtnC.isEnabled = true
-            //Toast.makeText(applicationContext,"Hello",Toast.LENGTH_SHORT).show()
+            setContentView(R.layout.activity_contrasttest)
             upBtnC.setOnClickListener{
                 guess(0)
             }
@@ -72,23 +61,41 @@ class ContrastTestActivity: AppCompatActivity() {
             leftBtnC.setOnClickListener{
                 guess(3)
             }
-        }
+            startButton.setOnClickListener{
+                start()
+                startButton.isEnabled=false
+                startButton.text=""
+                startButton.setBackgroundColor(Color.TRANSPARENT)
+                upBtnC.setBackgroundColor(Color.BLACK)
+                rightBtnC.setBackgroundColor(Color.BLACK)
+                downBtnC.setBackgroundColor(Color.BLACK)
+                leftBtnC.setBackgroundColor(Color.BLACK)
+                menuText.title = "Can't see:"
+                passButton.isVisible=true
+            }
+            keyboardConnected = false
+        } else setContentView(R.layout.activity_contrasttest_keyboard)
 
         setFrequency(freq)
+        gaussView.alpha=0f
 
         //set size
-        val displayMetrics = DisplayMetrics()
+        displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION")
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val gaussParams = gaussView.layoutParams
-        val gaussWidth = ViewMover.degreeToPixels(2.0, displayMetrics,getSharedPreferences("sp", Context.MODE_PRIVATE))
+        val gaussWidth = ViewMover.degreeToPixels(
+            2.0, displayMetrics, getSharedPreferences(
+                "sp",
+                Context.MODE_PRIVATE
+            )
+        )
         //Toast.makeText(applicationContext,gaussWidth.toString(),Toast.LENGTH_SHORT).show()
         gaussParams.width = gaussWidth
         gaussParams.height = gaussWidth
 
     }
 
-    //TODO: Tidy this
     private fun setFrequency(freq: Float){
         val source = BitmapFactory.decodeResource(
             applicationContext.resources,
@@ -107,7 +114,7 @@ class ContrastTestActivity: AppCompatActivity() {
                 hsv= floatArrayOf(
                     0f,
                     0f,
-                    Math.sin(Math.PI * 2 * x.toDouble() / (width / freq)).toFloat() / 2 + 0.5f
+                    sin(6.28f * x.toFloat() / (width / freq)) / 2 + 0.5f
                 )
                 pixels[index] = Color.HSVToColor(hsv)
             }
@@ -127,7 +134,6 @@ class ContrastTestActivity: AppCompatActivity() {
 
         freq *= 1.3f
         alpha *= 0.87f
-        setFrequency(freq)
         gaussView.alpha = alpha
 
         if(level == 5) {
@@ -138,6 +144,7 @@ class ContrastTestActivity: AppCompatActivity() {
         prevDir = ViewMover.move(gaussView, noiseView, false)
 
         applyNoise()
+        setFrequency(freq)
 
         level++
     }
@@ -150,15 +157,15 @@ class ContrastTestActivity: AppCompatActivity() {
         for (i in guesses.indices) {
             if(!guesses[i] && !mistakeMade){
                 result = when(i) {
-                    in 0..3 -> "Low contrast sensitivity."
+                    in 0..4 -> "Low contrast sensitivity."
                     else -> "Mostly adequate contrast sensitivity."
                 }
                 mistakeMade = true
             }
             val res = if(guesses[i]) "CORRECT"
             else "WRONG"
-            val freqRound = round(frequencies[i],2)
-            val alphaRound = round(alphas[i]*100,2)
+            val freqRound = round(frequencies[i], 2)
+            val alphaRound = round(alphas[i] * 100, 2)
             fileText+="\tFREQ: "+freqRound.toString()+"\tCONTR: "+alphaRound.toString()+"%\t"+res+"\n"
         }
         Toast.makeText(applicationContext, result, Toast.LENGTH_SHORT).show()
@@ -168,20 +175,49 @@ class ContrastTestActivity: AppCompatActivity() {
     }
 
     private fun applyNoise() {
-        noiseView.setImageBitmap(
-            Noise.applyNoise(
-                BitmapFactory.decodeResource(
-                    applicationContext.resources,
-                    R.drawable.black_square
-                ), 300, 600
-            )
-        )
+        when(noiseNumber) {
+            0 -> noiseView.setImageResource(R.drawable.noise1)
+            1 -> noiseView.setImageResource(R.drawable.noise2)
+            2 -> noiseView.setImageResource(R.drawable.noise3)
+            else -> noiseView.setImageResource(R.drawable.noise4)
+        }
+        noiseNumber++
+        if(noiseNumber==4) noiseNumber=0
     }
 
     private fun round(number: Float, decimalPlaces: Int): Float {
-        val number3digits = (number * 10f.pow(decimalPlaces+2)).roundToInt() / 10f.pow(decimalPlaces+2)
-        val number2digits = (number3digits * 10f.pow(decimalPlaces+1)).roundToInt() / 10f.pow(decimalPlaces+1)
+        val number3digits = (number * 10f.pow(decimalPlaces + 2)).roundToInt() / 10f.pow(
+            decimalPlaces + 2
+        )
+        val number2digits = (number3digits * 10f.pow(decimalPlaces + 1)).roundToInt() / 10f.pow(
+            decimalPlaces + 1
+        )
         return (number2digits * 10f.pow(decimalPlaces)).roundToInt() / 10f.pow(decimalPlaces)
+    }
+
+    fun start() {
+        prevDir = ViewMover.move(gaussView, noiseView, true)
+        applyNoise()
+        gaussView.alpha = alpha
+
+        demoView.alpha=0f
+        textView.text=""
+        menuText.isVisible=true
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        if (menu != null) {
+            passButton = menu.getItem(1)
+            menuText = menu.getItem(0)
+        }
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        guess(4)
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -209,10 +245,17 @@ class ContrastTestActivity: AppCompatActivity() {
                 true
             }
             KeyEvent.KEYCODE_SPACE -> {
+                if (!started) {
+                    start()
+                    started = true
+                    startTextView.setBackgroundColor(Color.TRANSPARENT)
+                    startTextView.text = ""
+                }
                 true
             }
             else -> super.onKeyDown(keyCode, event)
         }
     }
+
 
 }

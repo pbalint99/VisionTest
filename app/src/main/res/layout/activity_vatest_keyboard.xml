@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
+
     <ImageView
         android:id="@+id/ivSnellen"
         android:layout_width="wrap_content"
@@ -17,8 +19,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.499"
-        android:contentDescription="@string/arrow"
         />
+
     <ImageView
         android:id="@+id/upArrow"
         android:layout_width="100dp"
@@ -36,7 +38,7 @@
         android:id="@+id/leftArrow"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        app:layout_constraintBottom_toBottomOf="@+id/leftBtn"
+        app:layout_constraintBottom_toBottomOf="@id/downguideline"
         app:layout_constraintEnd_toStartOf="@+id/vguideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/upguideline"
@@ -51,8 +53,8 @@
         android:layout_height="100dp"
         app:layout_constraintBottom_toTopOf="@+id/downguideline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/rightBtn"
-        app:layout_constraintTop_toTopOf="@+id/rightBtn"
+        app:layout_constraintStart_toStartOf="@id/vguideline"
+        app:layout_constraintTop_toTopOf="@id/upguideline"
         app:srcCompat="@drawable/arrow"
         android:contentDescription="@string/arrow"
         android:rotation="90"
@@ -64,56 +66,62 @@
         android:layout_height="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/downBtn"
-        app:layout_constraintTop_toTopOf="@+id/downBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/downguideline"
         app:srcCompat="@drawable/arrow"
         android:contentDescription="@string/arrow"
         android:rotation="180"
         app:tint="@color/colorPrimaryDark" />
 
-    <Button
-        android:id="@+id/rightBtn"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:backgroundTint="#00FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/downguideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/vguideline"
-        app:layout_constraintTop_toTopOf="@+id/upguideline"
-         />
-
-    <Button
-        android:id="@+id/leftBtn"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:backgroundTint="#00FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/downguideline"
-        app:layout_constraintEnd_toStartOf="@+id/vguideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/upguideline"
-         />
-
-    <Button
-        android:id="@+id/upBtn"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:backgroundTint="#00FFFFFF"
+    <ImageView
+        android:id="@+id/upArrowBox"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         app:layout_constraintBottom_toTopOf="@+id/upguideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-         />
+        app:layout_constraintVertical_bias="0.51"
+        app:srcCompat="@drawable/square"
+        android:contentDescription="@string/arrow"
+        app:tint="@color/colorPrimaryDark" />
 
-    <Button
-        android:id="@+id/downBtn"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:backgroundTint="#00FFFFFF"
+    <ImageView
+        android:id="@+id/leftArrowBox"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toBottomOf="@id/downguideline"
+        app:layout_constraintEnd_toStartOf="@+id/vguideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/upguideline"
+        app:srcCompat="@drawable/square"
+        android:contentDescription="@string/arrow"
+        app:tint="@color/colorPrimaryDark"/>
+
+    <ImageView
+        android:id="@+id/rightArrowBox"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toTopOf="@+id/downguideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vguideline"
+        app:layout_constraintTop_toTopOf="@id/upguideline"
+        app:srcCompat="@drawable/square"
+        android:contentDescription="@string/arrow"
+        app:tint="@color/colorPrimaryDark" />
+
+    <ImageView
+        android:id="@+id/downArrowBox"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/downguideline"
-         />
+        app:layout_constraintTop_toTopOf="@id/downguideline"
+        app:srcCompat="@drawable/square"
+        android:contentDescription="@string/arrow"
+        app:tint="@color/colorPrimaryDark" />
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vguideline"
@@ -121,7 +129,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5"
-         />
+        />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/upguideline"
@@ -136,6 +144,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.75" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

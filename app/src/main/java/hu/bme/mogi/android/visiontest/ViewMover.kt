@@ -13,6 +13,7 @@ import kotlin.math.tan
 object ViewMover {
     var density: Float = 0f
     var distance: Float = 0f
+    var prevDir = intArrayOf(4,4)
 
     fun move(viewToMove: View, bigView: View, rotate: Boolean): Int {
         val params = viewToMove.layoutParams as ConstraintLayout.LayoutParams
@@ -24,7 +25,6 @@ object ViewMover {
         val height = bigView.height
         val horWiggleRoom = (0.1f*width).toInt()
         val vertWiggleRoom = (0.1f*height).toInt()
-        var prevDir = intArrayOf(4,4)
 
         var dir = (0..3).random()
         while(dir==prevDir[0] && dir==prevDir[1]) {

@@ -23,7 +23,6 @@
         <activity android:name=".activities.ColorActivity" />
         <activity android:name=".activities.ContrastTestActivity" />
         <activity android:name=".activities.CalibrationActivity" />
-        <activity android:name=".activities.SaveActivity" />
     </application>
 
 </manifest>

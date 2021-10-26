@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_vatest.leftArrow
 import kotlinx.android.synthetic.main.activity_vatest.rightArrow
 import kotlinx.android.synthetic.main.activity_vatest.upArrow
 import kotlinx.android.synthetic.main.activity_vatest_keyboard.*
+import kotlin.math.atan
 
 
 class VATestActivity  : AppCompatActivity() {
@@ -110,7 +111,7 @@ class VATestActivity  : AppCompatActivity() {
         ivSnellen.layoutParams.width = ViewMover.mmToPixels(mmSize, displayMetrics)
 
         //Direction
-        direction=(0..3).random()
+        direction = (0..3).random()
         while(direction==prevDir[0] && direction==prevDir[1]) {
             direction = (0..3).random()
         }
@@ -177,12 +178,18 @@ class VATestActivity  : AppCompatActivity() {
         for (i in 0 until firstRoundGuesses) {
             if(!guesses[i] && results[0] == 4) {
                 results[0] = distances[i-1]
+                File.smallestVisibleInDegrees=atan(sixMSizes[i-1]/30000)*57.2957f
             }
         }
         for (i in firstRoundGuesses until allGuesses) {
             if(!guesses[i-firstRoundGuesses] && results[1] == 4) {
                 results[1] = distances[i - firstRoundGuesses]
+                val svid = sixMSizes[i - firstRoundGuesses] * distance / 30
+                if(File.smallestVisibleInDegrees>svid) File.smallestVisibleInDegrees=atan(sixMSizes[i - firstRoundGuesses]/30000)*57.2957f
             }
+        }
+        if(File.smallestVisibleInDegrees == 0f) {
+            File.smallestVisibleInDegrees = atan(sixMSizes.last()/30000)*57.2957f //57: rad to deg
         }
 
         //Popup:

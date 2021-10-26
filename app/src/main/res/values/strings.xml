@@ -13,4 +13,5 @@
     <string name="start">Start</string>
     <string name="can_t_see_it">Can\'t see it</string>
     <string name="arrow">arrow</string>
+    <string name="color_instructions">Find which side the colored dot is on.</string>
 </resources>

@@ -12,7 +12,7 @@ object Noise {
     const val circleColorDensity = 0.3f
 
     //TODO: noise density absed on distance?
-    fun applyNoise(source: Bitmap, width: Int, height: Int, color: Float = -1f, displayMetrics: DisplayMetrics, density: Int): Bitmap {
+    fun applyNoise(source: Bitmap, color: Float = -1f, displayMetrics: DisplayMetrics, density: Int): Bitmap {
         var hsv: FloatArray
         //if color is not set, set saturation to 0
         val sat = if(color == -1f) 0f
@@ -20,38 +20,36 @@ object Noise {
         val random = Random()
         var index = 0
         val aspectRatio = displayMetrics.widthPixels.toFloat()/displayMetrics.heightPixels
-        val width2= (displayMetrics.density*density).toInt()
-        val height2 = (displayMetrics.density*density*aspectRatio).toInt()
-        val pixels = IntArray(width2 * height2)
+        val width= (displayMetrics.density*density*aspectRatio).toInt()
+        val height = (displayMetrics.density*density).toInt()
+        val pixels = IntArray(width * height)
 
-        for (y in 0 until height2) {
-            for (x in 0 until width2) {
+        for (y in 0 until height) {
+            for (x in 0 until width) {
                 hsv= floatArrayOf(color-colorWiggleRoom/2+colorWiggleRoom*random.nextFloat(),
                     sat - satWiggleRoom*random.nextFloat(), random.nextFloat())
                 pixels[index] = Color.HSVToColor(hsv)
                 index++
             }
         }
-        return Bitmap.createBitmap(pixels, width2, height2, source.config)
+        return Bitmap.createBitmap(pixels, width, height, source.config)
     }
 
-
-    fun applyNoiseCircle(source: Bitmap, width: Int, color: Float): Bitmap {
-        // get source image size
-        val pixels = IntArray(width * width)
+    //dp, density could be stored in a local var
+    fun applyNoiseCircle(source: Bitmap, color: Float, displayMetrics: DisplayMetrics, density: Int, dotScreenRatio: Float = 0.2f): Bitmap {
         var hsv: FloatArray
         var finalColor: Int
-        // get pixel array from source
-        source.getPixels(pixels, 0, width, 0, 0, width, width)
         // create a random object
         val random = Random()
         var index : Int
+        val width= (displayMetrics.density*density*dotScreenRatio).toInt()
+        val pixels = IntArray(width * width)
+
         // iteration through pixels
         for (y in 0 until width) {
             for (x in 0 until width) {
                 // get current index in 2D-matrix
                 index = y * width + x
-                //TODO: optimise this
                 if(x * x - x * width + y * y - y*width < - width*width/4) {
                     if(random.nextFloat()> circleColorDensity) finalColor =  Color.TRANSPARENT
                     else {
@@ -65,7 +63,7 @@ object Noise {
             }
         }
         // output bitmap
-        val bmOut = Bitmap.createBitmap(width,width, source.config)
+        val bmOut = Bitmap.createBitmap(width, width, source.config)
         bmOut.setPixels(pixels, 0, width, 0, 0, width, width)
         return bmOut
     }

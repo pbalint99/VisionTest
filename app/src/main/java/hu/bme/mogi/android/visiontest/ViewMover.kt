@@ -1,17 +1,14 @@
 package hu.bme.mogi.android.visiontest
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.util.DisplayMetrics
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
-import kotlinx.android.synthetic.main.activity_contrasttest.*
 import java.util.*
-import kotlin.math.sin
+import kotlin.math.atan
 import kotlin.math.tan
 
 object ViewMover {
-    var density: Float = 0f
     var distance: Float = 0f
     var prevDir = intArrayOf(4,4)
 
@@ -65,11 +62,21 @@ object ViewMover {
         distance = sp.getFloat("distance", 1f)
         val mmSize = tan(Math.toRadians(deg)) * distance * 1000
         //val mmScreenWidth = 25.4f*1.05f*dm.widthPixels/dm.xdpi
-        //return intArrayOf(((mmSize*dm.xdpi)/(25.4*1.05f)).toInt(),mmSize.toInt())
         return ((mmSize*dm.xdpi)/(25.4*1.05f)).toInt()
     }
 
     fun mmToPixels(mmSize: Float = 10f, dm: DisplayMetrics) : Int {
         return ((mmSize*dm.xdpi)/(25.4*1.05f)).toInt()
+    }
+
+//    fun pixelsToDegree(pixels: Int, dm: DisplayMetrics, sp: SharedPreferences): Float {
+//        distance = sp.getFloat("distance", 1f)
+//        val mmSize = (pixels*25.4f*1.05f)/dm.xdpi
+//        return atan(mmSize/(1000* distance))
+//    }
+
+    fun mmToDegree(mmSize: Int, sp: SharedPreferences): Float {
+        distance = sp.getFloat("distance", 1f)
+        return atan(mmSize/(1000* distance))
     }
 }

@@ -6,18 +6,22 @@ import android.graphics.*
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.Noise
 import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
 import kotlinx.android.synthetic.main.activity_color.*
+import kotlinx.android.synthetic.main.activity_color.textView
 import kotlinx.android.synthetic.main.activity_contrasttest.downBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.leftBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.noiseView
 import kotlinx.android.synthetic.main.activity_contrasttest.startButton
 import kotlinx.android.synthetic.main.activity_contrasttest.rightBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
+import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
 
 //TODO: disable rotation
 class ColorActivity: AppCompatActivity() {
@@ -26,10 +30,11 @@ class ColorActivity: AppCompatActivity() {
     var prevDir = 5
     var level = 0
     var guesses = BooleanArray(5)
-    private var aspectRatio = 0f
+    //private var aspectRatio = 0f
     private var noiseDensity = 500
     private var index = 0
     var displayMetrics = DisplayMetrics()
+    var dotScreenRatio = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,22 +48,19 @@ class ColorActivity: AppCompatActivity() {
         @Suppress("DEPRECATION")
         windowManager.defaultDisplay.getMetrics(displayMetrics)
 
-        val dotWidth = ViewMover.degreeToPixels(2.0,displayMetrics,getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return)
-        aspectRatio = displayMetrics.widthPixels.toFloat()/displayMetrics.heightPixels
+        val dotWidth = ViewMover.degreeToPixels(1.0,displayMetrics,getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return)
+        //aspectRatio = displayMetrics.widthPixels.toFloat()/displayMetrics.heightPixels
         dotParams.width = dotWidth
         dotParams.height = dotWidth
 
+        dotScreenRatio = dotWidth.toFloat()/displayMetrics.widthPixels
 
         startButton.setOnClickListener {
-            startButton.isEnabled = false
-            startButton.text = ""
-            startButton.setBackgroundColor(Color.TRANSPARENT)
             if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
                 upBtnC.isEnabled = true
                 downBtnC.isEnabled = true
                 leftBtnC.isEnabled = true
                 rightBtnC.isEnabled = true
-                Toast.makeText(applicationContext,"Hello",Toast.LENGTH_SHORT).show()
                 upBtnC.setOnClickListener{
                     guess(0)
                 }
@@ -72,10 +74,7 @@ class ColorActivity: AppCompatActivity() {
                     guess(3)
                 }
             }
-
-            prevDir = ViewMover.move(dotView, noiseView, false)
-
-            applyNoises(0)
+            start()
         }
 
     }
@@ -114,16 +113,27 @@ class ColorActivity: AppCompatActivity() {
             Noise.applyNoise(
                 BitmapFactory.decodeResource(
                     applicationContext.resources, R.drawable.black_square
-                ), noiseDensity, (noiseDensity*aspectRatio).toInt(), bgColor[index], displayMetrics, 200
+                ),-1f, displayMetrics, 200
             )
         )
         dotView.setImageBitmap(
             Noise.applyNoiseCircle(
                 BitmapFactory.decodeResource(
                     applicationContext.resources, R.drawable.black_square
-                ), noiseDensity/8, dotColor[index]
-            )
+                ),
+                0f, displayMetrics,200,dotScreenRatio)
         )
+    }
+
+    private fun start()  {
+        startButton.isEnabled = false
+        startButton.text = ""
+        startButton.setBackgroundColor(Color.TRANSPARENT)
+        textView.text = ""
+
+        prevDir = ViewMover.move(dotView, noiseView, false)
+
+        applyNoises(0)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

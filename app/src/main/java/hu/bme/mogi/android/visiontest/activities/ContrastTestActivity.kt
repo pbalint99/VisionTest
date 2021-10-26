@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Environment
 import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.Menu
@@ -21,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_contrasttest.gaussView
 import kotlinx.android.synthetic.main.activity_contrasttest.noiseView
 import kotlinx.android.synthetic.main.activity_contrasttest.textView
 import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
+import java.io.FileOutputStream
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -35,8 +37,8 @@ class ContrastTestActivity: AppCompatActivity() {
     var guesses = BooleanArray(6)
     var alphas = FloatArray(6)
     var frequencies = FloatArray(6)
-    var alpha = 0.15f
-    var freq = 7f
+    var alpha = 0.06f
+    var cpd = 1.5f
     var started = false
     var displayMetrics = DisplayMetrics()
     var noiseNumber = 0
@@ -76,7 +78,7 @@ class ContrastTestActivity: AppCompatActivity() {
             keyboardConnected = false
         } else setContentView(R.layout.activity_contrasttest_keyboard)
 
-        setFrequency(freq)
+        setFrequency(cpd)
         gaussView.alpha=0f
 
         //set size
@@ -96,7 +98,7 @@ class ContrastTestActivity: AppCompatActivity() {
 
     }
 
-    private fun setFrequency(freq: Float){
+    private fun setFrequency(cpd: Float) {
         val source = BitmapFactory.decodeResource(
             applicationContext.resources,
             R.drawable.black_square
@@ -105,6 +107,10 @@ class ContrastTestActivity: AppCompatActivity() {
         val height = source.height
         val pixels = IntArray(width * height)
         var hsv: FloatArray
+        val freq = cpd*2
+        //val svd = File.smallestVisibleInDegrees
+
+        //if(svd/2<cpd)
 
         var index = 0
         for (y in 0 until height) {
@@ -123,17 +129,19 @@ class ContrastTestActivity: AppCompatActivity() {
         val bmOut = Bitmap.createBitmap(width, height, source.config)
         bmOut.setPixels(pixels, 0, width, 0, 0, width, height)
         gaussView.setImageBitmap(bmOut)
+        File.saveImage(bmOut)
     }
 
     //TODO: lépcsős fentről-lentről megbecsülés
     private fun guess(dir: Int) {
         val correct = dir == prevDir
         guesses[level] = correct
-        frequencies[level] = freq
+        frequencies[level] = cpd
         alphas[level] = alpha
 
-        freq *= 1.3f
-        alpha *= 0.87f
+        //Values by Mirella:
+        cpd *= 1.3195f
+        alpha *= 0.8705f
         gaussView.alpha = alpha
 
         if(level == 5) {
@@ -141,10 +149,10 @@ class ContrastTestActivity: AppCompatActivity() {
             return
         }
 
-        prevDir = ViewMover.move(gaussView, noiseView, false)
+        prevDir = ViewMover.move(gaussView, noiseView, true)
 
         applyNoise()
-        setFrequency(freq)
+        setFrequency(cpd)
 
         level++
     }
@@ -166,7 +174,7 @@ class ContrastTestActivity: AppCompatActivity() {
             else "WRONG"
             val freqRound = round(frequencies[i], 2)
             val alphaRound = round(alphas[i] * 100, 2)
-            fileText+="\tFREQ: "+freqRound.toString()+"\tCONTR: "+alphaRound.toString()+"%\t"+res+"\n"
+            fileText+="\tCPD: "+freqRound.toString()+"\tCONTR: "+alphaRound.toString()+"%\t"+res+"\n"
         }
         Toast.makeText(applicationContext, result, Toast.LENGTH_SHORT).show()
         fileText+= "\tEVALUATION:\n\t$result\n"
@@ -256,6 +264,5 @@ class ContrastTestActivity: AppCompatActivity() {
             else -> super.onKeyDown(keyCode, event)
         }
     }
-
 
 }

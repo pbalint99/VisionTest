@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.activity_contrasttest.rightBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
 
-//TODO: disable rotation
 class ColorActivity: AppCompatActivity() {
     var bgColor = floatArrayOf(57f,245f) //Ishihara: 57f
     var dotColor = floatArrayOf(31f,65f) //Ishihara:31f
@@ -33,49 +32,46 @@ class ColorActivity: AppCompatActivity() {
     //private var aspectRatio = 0f
     private var noiseDensity = 500
     private var index = 0
-    var displayMetrics = DisplayMetrics()
-    var dotScreenRatio = 0f
+    //TODO: BUG
+    var dotScreenRatio = 0.2f
+    private lateinit var passButton : MenuItem
+    private lateinit var menuText : MenuItem
+    private lateinit var displayMetrics: DisplayMetrics
+    var started = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_color)
 
-        //Set sizes
-        val dotParams = dotView.layoutParams
-
-        //TODO: kell ez?
-        displayMetrics = DisplayMetrics()
-        @Suppress("DEPRECATION")
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-
-        val dotWidth = ViewMover.degreeToPixels(1.0,displayMetrics,getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return)
-        //aspectRatio = displayMetrics.widthPixels.toFloat()/displayMetrics.heightPixels
-        dotParams.width = dotWidth
-        dotParams.height = dotWidth
-
-        dotScreenRatio = dotWidth.toFloat()/displayMetrics.widthPixels
-
-        startButton.setOnClickListener {
-            if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+        if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+            setContentView(R.layout.activity_color)
+            startButton.setOnClickListener {
+                start()
                 upBtnC.isEnabled = true
                 downBtnC.isEnabled = true
                 leftBtnC.isEnabled = true
                 rightBtnC.isEnabled = true
-                upBtnC.setOnClickListener{
-                    guess(0)
-                }
-                rightBtnC.setOnClickListener{
-                    guess(1)
-                }
-                downBtnC.setOnClickListener{
-                    guess(2)
-                }
-                leftBtnC.setOnClickListener{
-                    guess(3)
-                }
+                passButton.isEnabled=true
+                menuText.title = "Can't see:"
+                startButton.isEnabled = false
+                startButton.text = ""
+                startButton.setBackgroundColor(Color.TRANSPARENT)
+            }
+            upBtnC.setOnClickListener{
+                guess(0)
+            }
+            rightBtnC.setOnClickListener{
+                guess(1)
+            }
+            downBtnC.setOnClickListener{
+                guess(2)
+            }
+            leftBtnC.setOnClickListener{
+                guess(3)
             }
             start()
-        }
+        } else setContentView(R.layout.activity_color_keyboard)
+
 
     }
 
@@ -104,36 +100,57 @@ class ColorActivity: AppCompatActivity() {
         }
         Toast.makeText(applicationContext,"Your result is: "+correct+"/"+guesses.size,Toast.LENGTH_SHORT).show()
         finish()
-
-    }
-
-    private fun applyNoises(index: Int) {
-        //Toast.makeText(applicationContext,noiseDensity.toString()+" "+(noiseDensity*aspectRatio).toInt().toString(),Toast.LENGTH_SHORT).show()
-        noiseView.setImageBitmap(
-            Noise.applyNoise(
-                BitmapFactory.decodeResource(
-                    applicationContext.resources, R.drawable.black_square
-                ),-1f, displayMetrics, 200
-            )
-        )
-        dotView.setImageBitmap(
-            Noise.applyNoiseCircle(
-                BitmapFactory.decodeResource(
-                    applicationContext.resources, R.drawable.black_square
-                ),
-                0f, displayMetrics,200,dotScreenRatio)
-        )
     }
 
     private fun start()  {
-        startButton.isEnabled = false
-        startButton.text = ""
-        startButton.setBackgroundColor(Color.TRANSPARENT)
         textView.text = ""
 
         prevDir = ViewMover.move(dotView, noiseView, false)
 
+        menuText.isVisible=true
+        displayMetrics = DisplayMetrics()
+        @Suppress("DEPRECATION")
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val dotParams = dotView.layoutParams
+        val dotWidth = ViewMover.degreeToPixels(1.0,displayMetrics,getSharedPreferences("sp", Context.MODE_PRIVATE))
+        dotParams.width = dotWidth
+        dotParams.height = dotWidth
+        dotScreenRatio = dotWidth.toFloat()/displayMetrics.widthPixels
+
         applyNoises(0)
+    }
+
+    private fun applyNoises(index: Int) {
+        noiseView.setImageBitmap(
+            Noise.applyNoise(
+                BitmapFactory.decodeResource(
+                    applicationContext.resources, R.drawable.black_square
+                ),displayMetrics, 400
+            )
+        )
+        dotView.setImageBitmap(
+            Noise.applyNoiseAmorphous(
+                BitmapFactory.decodeResource(
+                    applicationContext.resources, R.drawable.black_square
+                ),
+                0f, displayMetrics,200, dotScreenRatio)
+        )
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        if (menu != null) {
+            passButton = menu.getItem(1)
+            menuText = menu.getItem(0)
+        }
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        guess(4)
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -161,8 +178,24 @@ class ColorActivity: AppCompatActivity() {
                 true
             }
             KeyEvent.KEYCODE_SPACE -> {
+                if (!started) {
+                    start()
+                    started = true
+                    startTextView.setBackgroundColor(Color.TRANSPARENT)
+                    startTextView.text = ""
+                }
                 true
             }
+//            KeyEvent.KEYCODE_A -> {
+//                Noise.circleSat += 0.05f
+//                applyNoises(0)
+//                true
+//            }
+//            KeyEvent.KEYCODE_S -> {
+//                Noise.circleSat -= 0.05f
+//                applyNoises(0)
+//                true
+//            }
             else -> super.onKeyDown(keyCode, event)
         }
     }

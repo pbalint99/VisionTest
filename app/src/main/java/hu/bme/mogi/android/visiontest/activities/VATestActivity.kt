@@ -1,6 +1,7 @@
 package hu.bme.mogi.android.visiontest.activities
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
@@ -126,6 +127,7 @@ class VATestActivity  : AppCompatActivity() {
 
     //TODO: bug if pressing wrong 4 times
     private fun guess(dir: Int) {
+        Toast.makeText(applicationContext,direction.toString()+" "+dir.toString(),Toast.LENGTH_SHORT).show()
         if(firstGuess) {
             if(!keyboardConnected){
                 upArrow.visibility = View.GONE
@@ -177,8 +179,9 @@ class VATestActivity  : AppCompatActivity() {
 
         for (i in 0 until firstRoundGuesses) {
             if(!guesses[i] && results[0] == 4) {
-                results[0] = distances[i-1]
-                File.smallestVisibleInDegrees=atan(sixMSizes[i-1]/30000)*57.2957f
+                if(i>0) results[0] = distances[i-1]
+                else results[0] = 999
+                //File.smallestVisibleInDegrees=atan(sixMSizes[i-1]/30000)*57.2957f
             }
         }
         for (i in firstRoundGuesses until allGuesses) {
@@ -220,7 +223,8 @@ class VATestActivity  : AppCompatActivity() {
         fileText+="\tRESULTS:\n\tFIRST ATTEMPT:\n\t\t60/"+results[0].toString()+
                 "\n\tSECOND ATTEMPT:\n\t\t60/"+results[1].toString()+"\n\tEVALUATION:\n\t"+toastText
         File.writeFileOnInternalStorage(fileText)
-        finish()
+        val intent = Intent(this, ContrastTestActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -3,8 +3,6 @@ package hu.bme.mogi.android.visiontest.activities
 import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.KeyEvent
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.R
@@ -28,6 +26,7 @@ class CalibrationActivity: AppCompatActivity() {
 //                putInt("width", etWidth.text.toString().toInt())
 //                putInt("pixelWidth",pWidth)
                 putFloat("distance",etDistance.text.toString().toFloat())
+                putString("name",etName.text.toString())
                 apply()
             }
 

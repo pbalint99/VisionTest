@@ -1,6 +1,7 @@
 package hu.bme.mogi.android.visiontest.activities
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -107,22 +108,22 @@ class ContrastTestActivity: AppCompatActivity() {
         val height = source.height
         val pixels = IntArray(width * height)
         var hsv: FloatArray
-        val freq = cpd*2
+        val freq = (cpd*4).roundToInt()/2
         //val svd = File.smallestVisibleInDegrees
+        Toast.makeText(applicationContext,(cpd*2).toString()+" "+freq.toString(),Toast.LENGTH_SHORT).show()
 
         //if(svd/2<cpd)
 
         var index = 0
         for (y in 0 until height) {
             for (x in 0 until width) {
-                // get current index in 2D-matrix
-                index = y * width + x
                 hsv= floatArrayOf(
                     0f,
                     0f,
-                    sin(6.28f * x.toFloat() / (width / freq)) / 2 + 0.5f
+                    sin(2f/freq + (6.28f * x.toFloat() * freq) / width ) / 2 + 0.5f
                 )
                 pixels[index] = Color.HSVToColor(hsv)
+                index++
             }
         }
 
@@ -179,7 +180,8 @@ class ContrastTestActivity: AppCompatActivity() {
         Toast.makeText(applicationContext, result, Toast.LENGTH_SHORT).show()
         fileText+= "\tEVALUATION:\n\t$result\n"
         File.writeFileOnInternalStorage(fileText)
-        finish()
+        val intent = Intent(this, ColorActivity::class.java)
+        startActivity(intent)
     }
 
     private fun applyNoise() {

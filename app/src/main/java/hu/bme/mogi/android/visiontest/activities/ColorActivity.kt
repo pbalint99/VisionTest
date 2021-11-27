@@ -42,14 +42,10 @@ class ColorActivity: AppCompatActivity() {
     var prevDir = 5
     var level = 0
     var guesses = BooleanArray(5)
-    //private var aspectRatio = 0f
-    private var noiseDensity = 500
     private var index = 0
-    //TODO: BUG
     var dotScreenRatio = 0.2f
     private lateinit var passButton : MenuItem
     private lateinit var menuText : MenuItem
-    private lateinit var displayMetrics: DisplayMetrics
     private var started = false
 
 
@@ -136,9 +132,12 @@ class ColorActivity: AppCompatActivity() {
         prevDir = ViewMover.move(dotView, noiseView, false)
 
         menuText.isVisible=true
-        displayMetrics = DisplayMetrics()
+
+        val displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION")
         windowManager.defaultDisplay.getMetrics(displayMetrics)
+        Noise.setup(displayMetrics)
+
         val dotParams = dotView.layoutParams
         val dotWidth = ViewMover.degreeToPixels(1.0,displayMetrics,getSharedPreferences("sp", Context.MODE_PRIVATE))
         dotParams.width = dotWidth
@@ -152,23 +151,13 @@ class ColorActivity: AppCompatActivity() {
 
     private fun applyNoises(index: Int) {
         noiseView.setImageBitmap(
-            Noise.applyNoise(
-                BitmapFactory.decodeResource(
-                    applicationContext.resources, R.drawable.black_square
-                ),displayMetrics, 200
-            )
+            Noise.applyNoise()
         )
         dotView.setImageBitmap(
-            Noise.applyNoiseAmorphous(
-                BitmapFactory.decodeResource(
-                    applicationContext.resources, R.drawable.black_square
-                ),
-                0f, displayMetrics,200, dotScreenRatio)
+            Noise.applyNoiseAmorphous(0f, dotScreenRatio)
         )
         decoyView.setImageBitmap(
-            Noise.applyDecoys(BitmapFactory.decodeResource(
-                applicationContext.resources, R.drawable.black_square
-            ),displayMetrics, 200, dotScreenRatio)
+            Noise.applyDecoys(dotScreenRatio)
         )
     }
 

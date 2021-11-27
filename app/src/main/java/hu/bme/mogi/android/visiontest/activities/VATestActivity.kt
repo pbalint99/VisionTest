@@ -12,10 +12,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import hu.bme.mogi.android.visiontest.File
 import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
 import kotlinx.android.synthetic.main.activity_vatest.*
-import hu.bme.mogi.android.visiontest.File
 import kotlinx.android.synthetic.main.activity_vatest.downArrow
 import kotlinx.android.synthetic.main.activity_vatest.ivSnellen
 import kotlinx.android.synthetic.main.activity_vatest.leftArrow
@@ -75,7 +75,10 @@ class VATestActivity  : AppCompatActivity() {
         val sharedPref = getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return
         distance = sharedPref.getFloat("distance", 6f)
 
-        if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+        val gameControllers = File.getGameControllerIds()
+
+        if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES &&
+                gameControllers.isEmpty()) {
             setContentView(R.layout.activity_vatest)
 
             upBtn.setOnClickListener{
@@ -127,7 +130,6 @@ class VATestActivity  : AppCompatActivity() {
 
     //TODO: bug if pressing wrong 4 times
     private fun guess(dir: Int) {
-        Toast.makeText(applicationContext,direction.toString()+" "+dir.toString(),Toast.LENGTH_SHORT).show()
         if(firstGuess) {
             if(!keyboardConnected){
                 upArrow.visibility = View.GONE
@@ -222,7 +224,7 @@ class VATestActivity  : AppCompatActivity() {
         }
         fileText+="\tRESULTS:\n\tFIRST ATTEMPT:\n\t\t60/"+results[0].toString()+
                 "\n\tSECOND ATTEMPT:\n\t\t60/"+results[1].toString()+"\n\tEVALUATION:\n\t"+toastText
-        File.writeFileOnInternalStorage(fileText)
+        File.fileText+=fileText
         val intent = Intent(this, ContrastTestActivity::class.java)
         startActivity(intent)
     }

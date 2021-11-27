@@ -1,15 +1,23 @@
 package hu.bme.mogi.android.visiontest.activities
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.*
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import hu.bme.mogi.android.visiontest.File
 import hu.bme.mogi.android.visiontest.Noise
 import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
@@ -22,6 +30,11 @@ import kotlinx.android.synthetic.main.activity_contrasttest.startButton
 import kotlinx.android.synthetic.main.activity_contrasttest.rightBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
+import java.io.BufferedWriter
+import java.io.IOException
+import java.io.OutputStream
+import java.io.OutputStreamWriter
+import kotlin.math.round
 
 class ColorActivity: AppCompatActivity() {
     var bgColor = floatArrayOf(57f,245f) //Ishihara: 57f
@@ -37,13 +50,16 @@ class ColorActivity: AppCompatActivity() {
     private lateinit var passButton : MenuItem
     private lateinit var menuText : MenuItem
     private lateinit var displayMetrics: DisplayMetrics
-    var started = false
+    private var started = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+        val gameControllers = File.getGameControllerIds()
+
+        if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES &&
+            gameControllers.isEmpty()) {
             setContentView(R.layout.activity_color)
             startButton.setOnClickListener {
                 start()
@@ -69,13 +85,11 @@ class ColorActivity: AppCompatActivity() {
             leftBtnC.setOnClickListener{
                 guess(3)
             }
-            start()
         } else setContentView(R.layout.activity_color_keyboard)
-
-
     }
 
     private fun guess(dir: Int) {
+        if(!started) return
         guesses[level] = dir == prevDir
 
         if(level == 4) {
@@ -98,8 +112,22 @@ class ColorActivity: AppCompatActivity() {
         for (element in guesses) {
             if (element) correct++
         }
-        Toast.makeText(applicationContext,"Your result is: "+correct+"/"+guesses.size,Toast.LENGTH_SHORT).show()
-        finish()
+
+        var fileText="\n\nCOLOR PERCEPTION:\n"
+        var result = "Trichromat."
+
+        for (i in guesses.indices) {
+            if(!guesses[i]){
+                result = "Not trichromat"
+            }
+            val res = if(guesses[i]) "CORRECT"
+            else "WRONG"
+            fileText+="\t"+res+"\n"
+        }
+        fileText+= "\tEVALUATION:\n\t$result\n"
+        File.fileText+=fileText
+        createFile()
+        //finish()
     }
 
     private fun start()  {
@@ -118,6 +146,8 @@ class ColorActivity: AppCompatActivity() {
         dotScreenRatio = dotWidth.toFloat()/displayMetrics.widthPixels
 
         applyNoises(0)
+
+        started = true
     }
 
     private fun applyNoises(index: Int) {
@@ -125,7 +155,7 @@ class ColorActivity: AppCompatActivity() {
             Noise.applyNoise(
                 BitmapFactory.decodeResource(
                     applicationContext.resources, R.drawable.black_square
-                ),displayMetrics, 400
+                ),displayMetrics, 200
             )
         )
         dotView.setImageBitmap(
@@ -134,6 +164,11 @@ class ColorActivity: AppCompatActivity() {
                     applicationContext.resources, R.drawable.black_square
                 ),
                 0f, displayMetrics,200, dotScreenRatio)
+        )
+        decoyView.setImageBitmap(
+            Noise.applyDecoys(BitmapFactory.decodeResource(
+                applicationContext.resources, R.drawable.black_square
+            ),displayMetrics, 200, dotScreenRatio)
         )
     }
 
@@ -177,27 +212,53 @@ class ColorActivity: AppCompatActivity() {
             KeyEvent.KEYCODE_ENTER -> {
                 true
             }
-            KeyEvent.KEYCODE_SPACE -> {
+            KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_BUTTON_B, KeyEvent.KEYCODE_BUTTON_X,  KeyEvent.KEYCODE_BUTTON_Y,
+            KeyEvent.KEYCODE_BUTTON_START, KeyEvent.KEYCODE_BUTTON_SELECT -> {
                 if (!started) {
                     start()
-                    started = true
                     startTextView.setBackgroundColor(Color.TRANSPARENT)
                     startTextView.text = ""
                 }
                 true
             }
-//            KeyEvent.KEYCODE_A -> {
-//                Noise.circleSat += 0.05f
-//                applyNoises(0)
-//                true
-//            }
-//            KeyEvent.KEYCODE_S -> {
-//                Noise.circleSat -= 0.05f
-//                applyNoises(0)
-//                true
-//            }
             else -> super.onKeyDown(keyCode, event)
         }
     }
 
+    private fun createFile() {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TITLE, File.fileName)
+        }
+        startActivityForResult(intent, 1)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1) {
+            when (resultCode) {
+                RESULT_OK -> if (data != null
+                    && data.data != null
+                ) {
+                    writeInFile(data.data!!, File.fileText)
+                }
+                RESULT_CANCELED -> {
+                }
+            }
+        }
+    }
+
+    private fun writeInFile(uri: Uri, text: String) {
+        val outputStream: OutputStream?
+        try {
+            outputStream = contentResolver.openOutputStream(uri)
+            val bw = BufferedWriter(OutputStreamWriter(outputStream))
+            bw.write(text)
+            bw.flush()
+            bw.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
 }

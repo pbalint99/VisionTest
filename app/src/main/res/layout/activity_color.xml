@@ -44,18 +44,54 @@
         tools:ignore="ContentDescription" />
 
     <ImageView
+        android:id="@+id/decoyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/startButton"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:scaleType="centerCrop"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
         android:id="@+id/dotView"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/noiseView"
         app:layout_constraintEnd_toEndOf="@id/noiseView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/noiseView"
         app:layout_constraintTop_toTopOf="@id/noiseView"
         app:layout_constraintVertical_bias="0.0"
-        tools:ignore="ContentDescription"
-        tools:visibility="visible" />
+        tools:ignore="ContentDescription" />
+
+<!--    <ImageView-->
+<!--        android:id="@+id/dotViewRight"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/rightBtnC"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/rightBtnC"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/rightBtnC" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/dotViewDown"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/startButton" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/dotViewLeft"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/leftBtnC"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/rightBtnC"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/leftBtnC" />-->
 
     <Button
         android:id="@+id/rightBtnC"

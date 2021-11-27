@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.DisplayMetrics
@@ -14,6 +15,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.alpha
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import hu.bme.mogi.android.visiontest.File
 import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
@@ -23,10 +28,8 @@ import kotlinx.android.synthetic.main.activity_contrasttest.gaussView
 import kotlinx.android.synthetic.main.activity_contrasttest.noiseView
 import kotlinx.android.synthetic.main.activity_contrasttest.textView
 import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
-import java.io.FileOutputStream
-import kotlin.math.pow
-import kotlin.math.roundToInt
-import kotlin.math.sin
+import java.io.*
+import kotlin.math.*
 
 
 class ContrastTestActivity: AppCompatActivity() {
@@ -38,7 +41,7 @@ class ContrastTestActivity: AppCompatActivity() {
     var guesses = BooleanArray(6)
     var alphas = FloatArray(6)
     var frequencies = FloatArray(6)
-    var alpha = 0.06f
+    var alpha = 0.9f
     var cpd = 1.5f
     var started = false
     var displayMetrics = DisplayMetrics()
@@ -50,7 +53,10 @@ class ContrastTestActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+        val gameControllers = File.getGameControllerIds()
+
+        if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES &&
+            gameControllers.isEmpty()) {
             setContentView(R.layout.activity_contrasttest)
             upBtnC.setOnClickListener{
                 guess(0)
@@ -93,13 +99,12 @@ class ContrastTestActivity: AppCompatActivity() {
                 Context.MODE_PRIVATE
             )
         )
-        //Toast.makeText(applicationContext,gaussWidth.toString(),Toast.LENGTH_SHORT).show()
         gaussParams.width = gaussWidth
         gaussParams.height = gaussWidth
-
     }
 
     private fun setFrequency(cpd: Float) {
+        //TODO: A kör nem alfázott közepe legyen két térszög, ne az egész kép?
         val source = BitmapFactory.decodeResource(
             applicationContext.resources,
             R.drawable.black_square
@@ -109,11 +114,12 @@ class ContrastTestActivity: AppCompatActivity() {
         val pixels = IntArray(width * height)
         var hsv: FloatArray
         val freq = (cpd*4).roundToInt()/2
-        //val svd = File.smallestVisibleInDegrees
-        Toast.makeText(applicationContext,(cpd*2).toString()+" "+freq.toString(),Toast.LENGTH_SHORT).show()
-
+        //val svd = File.
+        val alpha = 0.3f //A teljes alfájú kör sugara, max 0.5f
+        val wfel = width.toFloat()/2
+        val wa = wfel*2*alpha
         //if(svd/2<cpd)
-
+0
         var index = 0
         for (y in 0 until height) {
             for (x in 0 until width) {
@@ -122,7 +128,21 @@ class ContrastTestActivity: AppCompatActivity() {
                     0f,
                     sin(2f/freq + (6.28f * x.toFloat() * freq) / width ) / 2 + 0.5f
                 )
-                pixels[index] = Color.HSVToColor(hsv)
+                val hsvColor = Color.HSVToColor(hsv)
+//                if((width.toFloat()/2-x).pow(2)+(height.toFloat()/2-y).pow(2)<alphaBorderWidth.pow(2)) pixels[index] = hsvColor
+//                else {
+//                    val alpha = ((1-(x.toFloat()/width - 0.5f).pow(2)*2-(y.toFloat()/height - 0.5f-0.8f).pow(2)*2)*100).toInt()
+//                        //val alpha = ((1 - 0.5f*(abs(width.toFloat()/2-x)-alphaBorderWidth).pow(2)/(width.toFloat()/2-alphaBorderWidth) - 0.5f*(abs(width.toFloat()/2-y)-alphaBorderWidth).pow(2)/(width.toFloat()/2-alphaBorderWidth))*100).toInt()
+//                    pixels[index] = Color.argb(alpha,hsvColor.red,hsvColor.green,hsvColor.blue)
+//                }
+                val r = sqrt((x-wfel).pow(2)+(y-wfel).pow(2))
+                if(r<=wa) pixels[index] = hsvColor
+                else if (r>wa && r<wfel) {
+                    val alfa = ((1 - (r-wa)/(wfel-wa))*255).toInt()
+                    pixels[index] = Color.argb(alfa,hsvColor.red,hsvColor.green,hsvColor.blue)
+                } else {
+                    pixels[index] = Color.TRANSPARENT
+                }
                 index++
             }
         }
@@ -130,11 +150,12 @@ class ContrastTestActivity: AppCompatActivity() {
         val bmOut = Bitmap.createBitmap(width, height, source.config)
         bmOut.setPixels(pixels, 0, width, 0, 0, width, height)
         gaussView.setImageBitmap(bmOut)
-        File.saveImage(bmOut)
+        //File.saveImage(bmOut)
     }
 
     //TODO: lépcsős fentről-lentről megbecsülés
     private fun guess(dir: Int) {
+        if(!started) return
         val correct = dir == prevDir
         guesses[level] = correct
         frequencies[level] = cpd
@@ -177,9 +198,8 @@ class ContrastTestActivity: AppCompatActivity() {
             val alphaRound = round(alphas[i] * 100, 2)
             fileText+="\tCPD: "+freqRound.toString()+"\tCONTR: "+alphaRound.toString()+"%\t"+res+"\n"
         }
-        Toast.makeText(applicationContext, result, Toast.LENGTH_SHORT).show()
         fileText+= "\tEVALUATION:\n\t$result\n"
-        File.writeFileOnInternalStorage(fileText)
+        File.fileText+=fileText
         val intent = Intent(this, ColorActivity::class.java)
         startActivity(intent)
     }
@@ -213,6 +233,7 @@ class ContrastTestActivity: AppCompatActivity() {
         demoView.alpha=0f
         textView.text=""
         menuText.isVisible=true
+        started = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -248,16 +269,13 @@ class ContrastTestActivity: AppCompatActivity() {
                 guess(3)
                 true
             }
-            KeyEvent.KEYCODE_ESCAPE -> {
+            KeyEvent.KEYCODE_ESCAPE, KeyEvent.KEYCODE_ENTER -> {
                 true
             }
-            KeyEvent.KEYCODE_ENTER -> {
-                true
-            }
-            KeyEvent.KEYCODE_SPACE -> {
+            KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_BUTTON_B, KeyEvent.KEYCODE_BUTTON_X,  KeyEvent.KEYCODE_BUTTON_Y,
+            KeyEvent.KEYCODE_BUTTON_START, KeyEvent.KEYCODE_BUTTON_SELECT -> {
                 if (!started) {
                     start()
-                    started = true
                     startTextView.setBackgroundColor(Color.TRANSPARENT)
                     startTextView.text = ""
                 }

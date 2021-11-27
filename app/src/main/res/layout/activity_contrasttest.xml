@@ -48,7 +48,6 @@
         android:id="@+id/gaussView"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/noiseView"
         app:layout_constraintEnd_toEndOf="@id/noiseView"
         app:layout_constraintHorizontal_bias="0.0"

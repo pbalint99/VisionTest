@@ -14,6 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.R
 import kotlinx.android.synthetic.main.activity_main.*
 
+//TODO: touch and keyboard should mutually work
+//TODO: feedback when button pressed (so low VA can see something happened)
+//Back button rewrite
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,55 +42,6 @@ class MainActivity : AppCompatActivity() {
         color_start.setOnClickListener{
             val intent = Intent(this, ColorActivity::class.java)
             startActivity(intent)
-        }
-
-        try {
-            if (checkSystemWritePermission()) {
-                setBrightness(255)
-            } else {
-                Toast.makeText(
-                    applicationContext,
-                    "Please allow modifying system settings.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        } catch (e: Exception) {
-            Log.i("settings", e.toString())
-            Toast.makeText(
-                applicationContext,
-                "Please allow modifying system settings.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-        val size = Point()
-        display?.getRealSize(size)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 1)
-        }
-    }
-
-    fun setBrightness(brightness: Int) {
-
-        //constrain the value of brightness
-        var brightness = brightness
-        if (brightness < 0) brightness = 0 else if (brightness > 255) brightness = 255
-        val cResolver = this.applicationContext.contentResolver
-        Settings.System.putInt(cResolver, Settings.System.SCREEN_BRIGHTNESS, brightness)
-    }
-
-    private fun checkSystemWritePermission(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (Settings.System.canWrite(applicationContext)) return true else openAndroidPermissionsMenu()
-        }
-        return false
-    }
-
-    private fun openAndroidPermissionsMenu() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
-            intent.data = Uri.parse("package:" + applicationContext.getPackageName())
-            applicationContext.startActivity(intent)
         }
     }
 

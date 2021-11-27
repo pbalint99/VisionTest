@@ -153,11 +153,15 @@ class ColorActivity: AppCompatActivity() {
         noiseView.setImageBitmap(
             Noise.applyNoise()
         )
-        dotView.setImageBitmap(
-            Noise.applyNoiseAmorphous(0f, dotScreenRatio)
-        )
+//        dotView.setImageBitmap(
+//            Noise.applyNoiseAmorphous(0f, dotScreenRatio)
+//        )
+//        decoyView.setImageBitmap(
+//            Noise.applyDecoys(dotScreenRatio)
+//        )
+        decoyView.scaleType = ImageView.ScaleType.FIT_XY
         decoyView.setImageBitmap(
-            Noise.applyDecoys(dotScreenRatio)
+            Noise.applyDots(dotScreenRatio)
         )
     }
 

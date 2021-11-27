@@ -12,8 +12,8 @@ object Noise {
     private const val circleColorDensity = 0.3f
     private const val circleSat = 0.3f
     private val radii = IntArray(101)
-    //private val xCoords = IntArray(101)
-    //private val yCoords = IntArray(101)
+    private val xCoords = IntArray(101)
+    private val yCoords = IntArray(101)
     private val opacity = FloatArray(101)
     private var widthCells = 100
     private const val densityMultiplier = 50
@@ -39,63 +39,63 @@ object Noise {
         return Bitmap.createBitmap(pixels, widthCells, heightCells, Bitmap.Config.RGB_565)
     }
 
-    fun applyDots(dotScreenRatio: Float): Bitmap {
-        var index = 0
-        val dotWidthCells = (widthCells*dotScreenRatio).toInt()
-        val pixels = IntArray(widthCells * heightCells) { Color.TRANSPARENT } //Also cells
-        var totalSquareNumber = 0
-        val squareNumbers = IntArray(4)
-        for (i in squareNumbers.indices) {
-            val squareNumber = (6..10).random()
-            squareNumbers[i] = squareNumber
-            totalSquareNumber += squareNumber
-        }
-        val radii = IntArray(totalSquareNumber)
-        val squareX = IntArray(totalSquareNumber)
-        val squareY = IntArray(totalSquareNumber)
-        //Sorrend: up right down left; x y
-        //TODO: add wiggleroom, random opacity
-        val dotPos = intArrayOf(
-            widthCells/2, heightCells - dotWidthCells,
-            widthCells-dotWidthCells, heightCells/2,
-            widthCells/2, dotWidthCells,
-            dotWidthCells, heightCells/2
-        )
-        for(j in 0..3) {
-            for (i in 0 until squareNumbers[j]) {
-                radii[i] = (dotWidthCells / 5..dotWidthCells / 3).random()
-                squareX[i] = ((dotPos[2*j] - dotWidthCells/2 + radii[i])..(dotPos[2*j] + dotWidthCells/2 - radii[i])).random()
-                squareY[i] = ((dotPos[2*j+1] - dotWidthCells/2 + radii[i])..(dotPos[2*j+1] + dotWidthCells/2 - radii[i])).random()
-            }
-        }
-
-//        for(i in 0 until totalSquareNumber) {
-//            for (y in 0 until heightCells) {
-//                if(y > squareY[i] - radii[i] && y < squareY[i] + radii[i]) {
-//                    for (x in 0 until widthCells) {
-//                        if(x > squareX[i] - radii[i] && x < squareX[i] + radii[i]) {
-//                            hsv = floatArrayOf(0f, 1f, random.nextFloat())
-//                            pixels[index] = Color.HSVToColor(hsv)
-//                        }
-//                        index++
-//                    }
-//                } else index += widthCells
+//    fun applyDots(dotScreenRatio: Float): Bitmap {
+//        var index = 0
+//        val dotWidthCells = (widthCells*dotScreenRatio).toInt()
+//        val pixels = IntArray(widthCells * heightCells) { Color.TRANSPARENT } //Also cells
+//        var totalSquareNumber = 0
+//        val squareNumbers = IntArray(4)
+//        for (i in squareNumbers.indices) {
+//            val squareNumber = (6..10).random()
+//            squareNumbers[i] = squareNumber
+//            totalSquareNumber += squareNumber
+//        }
+//        val radii = IntArray(totalSquareNumber)
+//        val squareX = IntArray(totalSquareNumber)
+//        val squareY = IntArray(totalSquareNumber)
+//        //Sorrend: up right down left; x y
+//        //TODO: add wiggleroom, random opacity
+//        val dotPos = intArrayOf(
+//            widthCells/2, heightCells - dotWidthCells,
+//            widthCells-dotWidthCells, heightCells/2,
+//            widthCells/2, dotWidthCells,
+//            dotWidthCells, heightCells/2
+//        )
+//        for(j in 0..3) {
+//            for (i in 0 until squareNumbers[j]) {
+//                radii[i] = (dotWidthCells / 5..dotWidthCells / 3).random()
+//                squareX[i] = ((dotPos[2*j] - dotWidthCells/2 + radii[i])..(dotPos[2*j] + dotWidthCells/2 - radii[i])).random()
+//                squareY[i] = ((dotPos[2*j+1] - dotWidthCells/2 + radii[i])..(dotPos[2*j+1] + dotWidthCells/2 - radii[i])).random()
 //            }
 //        }
-        for (y in 0 until heightCells) {
-            for (x in 0 until widthCells) {
-                for(i in radii.indices) {
-                    if(x>squareX[i]-radii[i] && x<squareX[i]+radii[i]
-                        && y>squareY[i]-radii[i] && y<squareY[i]+radii[i] && random.nextFloat()< circleColorDensity) {
-                        hsv = floatArrayOf(0f, 0.3f, 1f)
-                        pixels[index] = Color.HSVToColor(hsv)
-                    }
-                }
-                index++
-            }
-        }
-        return Bitmap.createBitmap(pixels, widthCells, heightCells, Bitmap.Config.ARGB_8888)
-    }
+//
+////        for(i in 0 until totalSquareNumber) {
+////            for (y in 0 until heightCells) {
+////                if(y > squareY[i] - radii[i] && y < squareY[i] + radii[i]) {
+////                    for (x in 0 until widthCells) {
+////                        if(x > squareX[i] - radii[i] && x < squareX[i] + radii[i]) {
+////                            hsv = floatArrayOf(0f, 1f, random.nextFloat())
+////                            pixels[index] = Color.HSVToColor(hsv)
+////                        }
+////                        index++
+////                    }
+////                } else index += widthCells
+////            }
+////        }
+//        for (y in 0 until heightCells) {
+//            for (x in 0 until widthCells) {
+//                for(i in radii.indices) {
+//                    if(x>squareX[i]-radii[i] && x<squareX[i]+radii[i]
+//                        && y>squareY[i]-radii[i] && y<squareY[i]+radii[i] && random.nextFloat()< circleColorDensity) {
+//                        hsv = floatArrayOf(0f, 0.3f, 1f)
+//                        pixels[index] = Color.HSVToColor(hsv)
+//                    }
+//                }
+//                index++
+//            }
+//        }
+//        return Bitmap.createBitmap(pixels, widthCells, heightCells, Bitmap.Config.ARGB_8888)
+//    }
 
     fun setup(displayMetrics: DisplayMetrics) {
         aspectRatio = displayMetrics.widthPixels.toFloat() / displayMetrics.heightPixels
@@ -103,38 +103,38 @@ object Noise {
         widthCells = (displayMetrics.density*densityMultiplier).toInt()
     }
 
-//    fun applyNoiseAmorphous(
-//        color: Float,
-//        dotScreenRatio: Float
-//    ): Bitmap {
-//        var index = 0
-//        val dotWidthCells = (widthCells*dotScreenRatio).toInt()
-//        val pixels = IntArray(dotWidthCells * dotWidthCells) { Color.TRANSPARENT } //Also cells
-//        val circles = 0..(6..12).random()
-//
-//        for (i in circles) {
-//            radii[i] = (dotWidthCells / 10..dotWidthCells / 5).random()
-//            xCoords[i] = (radii[i]..(dotWidthCells - radii[i])).random()
-//            yCoords[i] = (radii[i]..(dotWidthCells - radii[i])).random()
-//        }
-//
-//        for (y in 0 until dotWidthCells) {
-//            for (x in 0 until dotWidthCells) {
-//                for (i in circles) {
-//                    if (x > xCoords[i] - radii[i] && x < xCoords[i] + radii[i]
-//                        && y > yCoords[i] - radii[i] && y < yCoords[i] + radii[i] && random.nextFloat() < circleColorDensity
-//                    ) {
-//                        hsv = floatArrayOf(color, circleSat, random.nextFloat())
-//                        pixels[index] = Color.HSVToColor(hsv)
-//                    }
-//                }
-//                index++
-//            }
-//        }
-//        //val bitmap = Bitmap.createBitmap(pixels, dotWidth, dotWidth, source.config)
-//        //File.saveImage(bitmap)
-//        return Bitmap.createBitmap(pixels, dotWidthCells, dotWidthCells, Bitmap.Config.ARGB_8888)
-//    }
+    fun applyNoiseAmorphous(
+        color: Float,
+        dotScreenRatio: Float
+    ): Bitmap {
+        var index = 0
+        val dotWidthCells = (widthCells*dotScreenRatio).toInt()
+        val pixels = IntArray(dotWidthCells * dotWidthCells) { Color.TRANSPARENT } //Also cells
+        val circles = 0..(6..12).random()
+
+        for (i in circles) {
+            radii[i] = (dotWidthCells / 10..dotWidthCells / 5).random()
+            xCoords[i] = (radii[i]..(dotWidthCells - radii[i])).random()
+            yCoords[i] = (radii[i]..(dotWidthCells - radii[i])).random()
+        }
+
+        for (y in 0 until dotWidthCells) {
+            for (x in 0 until dotWidthCells) {
+                for (i in circles) {
+                    if (x > xCoords[i] - radii[i] && x < xCoords[i] + radii[i]
+                        && y > yCoords[i] - radii[i] && y < yCoords[i] + radii[i] && random.nextFloat() < circleColorDensity
+                    ) {
+                        hsv = floatArrayOf(color, circleSat, random.nextFloat())
+                        pixels[index] = Color.HSVToColor(hsv)
+                    }
+                }
+                index++
+            }
+        }
+        //val bitmap = Bitmap.createBitmap(pixels, dotWidth, dotWidth, source.config)
+        //File.saveImage(bitmap)
+        return Bitmap.createBitmap(pixels, dotWidthCells, dotWidthCells, Bitmap.Config.ARGB_8888)
+    }
 
 
 

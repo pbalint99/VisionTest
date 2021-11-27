@@ -23,6 +23,7 @@ import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
 import kotlinx.android.synthetic.main.activity_color.*
 import kotlinx.android.synthetic.main.activity_color.textView
+import kotlinx.android.synthetic.main.activity_color_keyboard.*
 import kotlinx.android.synthetic.main.activity_contrasttest.downBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.leftBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.noiseView
@@ -30,6 +31,7 @@ import kotlinx.android.synthetic.main.activity_contrasttest.startButton
 import kotlinx.android.synthetic.main.activity_contrasttest.rightBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
+import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.startTextView
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStream
@@ -47,12 +49,18 @@ class ColorActivity: AppCompatActivity() {
     private lateinit var passButton : MenuItem
     private lateinit var menuText : MenuItem
     private var started = false
+    private var dotViews = arrayOfNulls<ImageView>(4)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val gameControllers = File.getGameControllerIds()
+
+        dotViews[0] = dotViewUp
+        dotViews[1] = dotViewRight
+        dotViews[2] = dotViewDown
+        dotViews[3] = dotViewLeft
 
         if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES &&
             gameControllers.isEmpty()) {
@@ -82,6 +90,7 @@ class ColorActivity: AppCompatActivity() {
                 guess(3)
             }
         } else setContentView(R.layout.activity_color_keyboard)
+
     }
 
     private fun guess(dir: Int) {
@@ -95,8 +104,8 @@ class ColorActivity: AppCompatActivity() {
 //        if(level == 4) {
 //            index++
 //        }
-
-        prevDir = ViewMover.move(dotView, noiseView, false)
+        //TODO:
+        //prevDir = ViewMover.move(dotView, noiseView, false)
 
         applyNoises(index)
 
@@ -129,7 +138,8 @@ class ColorActivity: AppCompatActivity() {
     private fun start()  {
         textView.text = ""
 
-        prevDir = ViewMover.move(dotView, noiseView, false)
+        //TODO:
+        //prevDir = ViewMover.move(dotView, noiseView, false)
 
         menuText.isVisible=true
 
@@ -138,31 +148,43 @@ class ColorActivity: AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         Noise.setup(displayMetrics)
 
-        val dotParams = dotView.layoutParams
         val dotWidth = ViewMover.degreeToPixels(1.0,displayMetrics,getSharedPreferences("sp", Context.MODE_PRIVATE))
-        dotParams.width = dotWidth
-        dotParams.height = dotWidth
         dotScreenRatio = dotWidth.toFloat()/displayMetrics.widthPixels
+        for (i in dotViews.indices) {
+            val dotParams = dotViews[i]?.layoutParams
+            dotParams?.width = dotWidth
+            dotParams?.height = dotWidth
+        }
 
         applyNoises(0)
 
         started = true
     }
 
+    //TODO: also for button control
     private fun applyNoises(index: Int) {
         noiseView.setImageBitmap(
             Noise.applyNoise()
         )
-//        dotView.setImageBitmap(
-//            Noise.applyNoiseAmorphous(0f, dotScreenRatio)
-//        )
+        dotViewLeft.setImageBitmap(
+            Noise.applyNoiseAmorphous(0f, dotScreenRatio)
+        )
+        dotViewRight.setImageBitmap(
+            Noise.applyNoiseAmorphous(0f, dotScreenRatio)
+        )
+        dotViewUp.setImageBitmap(
+                Noise.applyNoiseAmorphous(0f, dotScreenRatio)
+                )
+        dotViewDown.setImageBitmap(
+            Noise.applyNoiseAmorphous(0f, dotScreenRatio)
+        )
 //        decoyView.setImageBitmap(
 //            Noise.applyDecoys(dotScreenRatio)
 //        )
-        decoyView.scaleType = ImageView.ScaleType.FIT_XY
-        decoyView.setImageBitmap(
-            Noise.applyDots(dotScreenRatio)
-        )
+//        decoyView.scaleType = ImageView.ScaleType.FIT_XY
+//        decoyView.setImageBitmap(
+//            Noise.applyDots(dotScreenRatio)
+//        )
     }
 
 

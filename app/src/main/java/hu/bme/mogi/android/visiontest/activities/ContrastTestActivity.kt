@@ -6,16 +6,13 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.alpha
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -28,7 +25,6 @@ import kotlinx.android.synthetic.main.activity_contrasttest.gaussView
 import kotlinx.android.synthetic.main.activity_contrasttest.noiseView
 import kotlinx.android.synthetic.main.activity_contrasttest.textView
 import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
-import java.io.*
 import kotlin.math.*
 
 
@@ -200,7 +196,7 @@ class ContrastTestActivity: AppCompatActivity() {
         }
         fileText+= "\tEVALUATION:\n\t$result\n"
         File.fileText+=fileText
-        val intent = Intent(this, ColorActivity::class.java)
+        val intent = Intent(this, ColorTestActivity::class.java)
         startActivity(intent)
     }
 

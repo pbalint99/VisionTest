@@ -5,23 +5,17 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.*
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.File
 import hu.bme.mogi.android.visiontest.Noise
 import hu.bme.mogi.android.visiontest.R
 import hu.bme.mogi.android.visiontest.ViewMover
-import kotlinx.android.synthetic.main.activity_color.*
 import kotlinx.android.synthetic.main.activity_color.textView
 import kotlinx.android.synthetic.main.activity_color_keyboard.*
 import kotlinx.android.synthetic.main.activity_contrasttest.downBtnC
@@ -30,18 +24,16 @@ import kotlinx.android.synthetic.main.activity_contrasttest.noiseView
 import kotlinx.android.synthetic.main.activity_contrasttest.startButton
 import kotlinx.android.synthetic.main.activity_contrasttest.rightBtnC
 import kotlinx.android.synthetic.main.activity_contrasttest.upBtnC
-import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
 import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.startTextView
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStream
 import java.io.OutputStreamWriter
-import kotlin.math.round
 
-class ColorActivity: AppCompatActivity() {
+class ColorTestActivity: AppCompatActivity() {
     var bgColor = floatArrayOf(57f,245f) //Ishihara: 57f
     var dotColor = floatArrayOf(31f,65f) //Ishihara:31f
-    var prevDir = 5
+    var correctDir = 5
     var level = 0
     var guesses = BooleanArray(5)
     private var index = 0
@@ -56,11 +48,6 @@ class ColorActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val gameControllers = File.getGameControllerIds()
-
-        dotViews[0] = dotViewUp
-        dotViews[1] = dotViewRight
-        dotViews[2] = dotViewDown
-        dotViews[3] = dotViewLeft
 
         if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES &&
             gameControllers.isEmpty()) {
@@ -95,7 +82,7 @@ class ColorActivity: AppCompatActivity() {
 
     private fun guess(dir: Int) {
         if(!started) return
-        guesses[level] = dir == prevDir
+        guesses[level] = dir == correctDir
 
         if(level == 4) {
             evaluate()
@@ -104,8 +91,7 @@ class ColorActivity: AppCompatActivity() {
 //        if(level == 4) {
 //            index++
 //        }
-        //TODO:
-        //prevDir = ViewMover.move(dotView, noiseView, false)
+        correctDir = (0..3).random()
 
         applyNoises(index)
 
@@ -138,8 +124,12 @@ class ColorActivity: AppCompatActivity() {
     private fun start()  {
         textView.text = ""
 
-        //TODO:
-        //prevDir = ViewMover.move(dotView, noiseView, false)
+        dotViews[0] = dotViewUp
+        dotViews[1] = dotViewRight
+        dotViews[2] = dotViewDown
+        dotViews[3] = dotViewLeft
+
+        correctDir = (0..3).random()
 
         menuText.isVisible=true
 
@@ -166,25 +156,13 @@ class ColorActivity: AppCompatActivity() {
         noiseView.setImageBitmap(
             Noise.applyNoise()
         )
-        dotViewLeft.setImageBitmap(
-            Noise.applyNoiseAmorphous(0f, dotScreenRatio)
-        )
-        dotViewRight.setImageBitmap(
-            Noise.applyNoiseAmorphous(0f, dotScreenRatio)
-        )
-        dotViewUp.setImageBitmap(
-                Noise.applyNoiseAmorphous(0f, dotScreenRatio)
-                )
-        dotViewDown.setImageBitmap(
-            Noise.applyNoiseAmorphous(0f, dotScreenRatio)
-        )
-//        decoyView.setImageBitmap(
-//            Noise.applyDecoys(dotScreenRatio)
-//        )
-//        decoyView.scaleType = ImageView.ScaleType.FIT_XY
-//        decoyView.setImageBitmap(
-//            Noise.applyDots(dotScreenRatio)
-//        )
+        for (i in dotViews.indices) {
+            val color = if(correctDir == i) 0f
+                else ((5..8).random()*(-1)).toFloat()/10
+            dotViews[i]?.setImageBitmap(
+                Noise.applyNoiseAmorphous(color, dotScreenRatio)
+            )
+        }
     }
 
 

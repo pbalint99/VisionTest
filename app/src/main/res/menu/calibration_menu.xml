@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/more"
+        android:icon="@drawable/ic_baseline_more_vert_24"
+        android:title="@string/can_t_see_it"
+        app:showAsAction="always" >
+        <menu>
+            <item android:id="@+id/color_calibration"
+                android:title="@string/color_calibration" />
+        </menu>
+    </item>
+</menu>

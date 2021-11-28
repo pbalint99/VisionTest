@@ -17,4 +17,13 @@
     <string name="start_in_order">Start in order</string>
     <string name="pick_date">Pick date</string>
     <string name="choose_specific_test">Choose specific test</string>
+    <string name="green">Green (0–255)</string>
+    <string name="red">Red (0–255)</string>
+    <string name="HSV">HSV</string>
+    <string name="blue">Blue (0–255)</string>
+    <string name="color_calibration">Color calibration</string>
+    <string name="hue_0_360">Hue (0–360)</string>
+    <string name="saturation_0_1">Saturation (0–1)</string>
+    <string name="value_0_1">Value (0–1)</string>
+    <string name="rgb">RGB</string>
 </resources>

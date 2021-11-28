@@ -9,7 +9,7 @@
         android:visible="false"
         />
     <item
-        android:id="@+id/passButton"
+        android:id="@+id/more"
         android:title="@string/can_t_see_it"
         app:showAsAction="always"
         android:icon="@drawable/ic_baseline_visibility_off_24"

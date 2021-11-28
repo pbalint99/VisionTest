@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hu.bme.mogi.android.visiontest">
 
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -13,15 +13,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activities.ColorCalibrationActivity" />
         <activity android:name=".activities.CalibrationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.VATestActivity" />
-        <activity android:name=".activities.ColorActivity" />
-        <activity android:name=".activities.ContrastTestActivity" />
+        <activity android:name=".activities.VATestActivity"
+            android:noHistory="true"/>
+        <activity android:name=".activities.ColorTestActivity"
+            android:noHistory="true" />
+        <activity android:name=".activities.ContrastTestActivity"
+            android:noHistory="true" />
         <activity android:name=".activities.MainActivity" />
     </application>
 

@@ -1,15 +1,7 @@
 package hu.bme.mogi.android.visiontest.activities
 
-import android.Manifest.permission.READ_EXTERNAL_STORAGE
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Intent
-import android.graphics.Point
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -40,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         color_start.setOnClickListener{
-            val intent = Intent(this, ColorActivity::class.java)
+            val intent = Intent(this, ColorTestActivity::class.java)
             startActivity(intent)
         }
     }

@@ -51,6 +51,13 @@ class CalibrationActivity: AppCompatActivity() {
             startActivity(intent)
         }
 
+        chooseSpecificTv.setOnClickListener{
+            File.onlyOneTest = true
+            start()
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+
         yearSet = sharedPref.getInt("year", 2000)
         monthSet = sharedPref.getInt("month", 6)
         daySet = sharedPref.getInt("day", 15)
@@ -77,12 +84,6 @@ class CalibrationActivity: AppCompatActivity() {
             yearSet = year; monthSet = month; daySet = day
             date = "$yearSet/${monthSet+1}/$daySet"
             mDisplayDate.text = date
-        }
-
-        chooseSpecificTv.setOnClickListener{
-            start()
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
         }
 
         try {

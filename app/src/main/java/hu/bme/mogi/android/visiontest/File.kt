@@ -10,6 +10,7 @@ object File {
     var fileName = "VisionTestNamingError"
     lateinit var dir: File
     var fileText = ""
+    var onlyOneTest = false
 
 //    fun writeFileOnInternalStorage(sBody: String?) {
 //        try {

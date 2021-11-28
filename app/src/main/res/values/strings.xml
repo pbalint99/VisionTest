@@ -26,4 +26,5 @@
     <string name="saturation_0_1">Saturation (0–1)</string>
     <string name="value_0_1">Value (0–1)</string>
     <string name="rgb">RGB</string>
+    <string name="press_space_to_contine">Press space to contine</string>
 </resources>

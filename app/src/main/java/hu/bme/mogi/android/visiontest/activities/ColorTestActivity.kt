@@ -100,6 +100,7 @@ class ColorTestActivity: AppCompatActivity() {
 
     private fun evaluate() {
         var correct = 0
+        var evalInt = 0
         for (element in guesses) {
             if (element) correct++
         }
@@ -110,6 +111,7 @@ class ColorTestActivity: AppCompatActivity() {
         for (i in guesses.indices) {
             if(!guesses[i]){
                 result = "Not trichromat"
+                evalInt = 1
             }
             val res = if(guesses[i]) "CORRECT"
             else "WRONG"
@@ -117,8 +119,12 @@ class ColorTestActivity: AppCompatActivity() {
         }
         fileText+= "\tEVALUATION:\n\t$result\n"
         File.fileText+=fileText
-        createFile()
-        //finish()
+
+        val intent = Intent(this, ResultsActivity::class.java).apply {
+            putExtra("type",2)
+            putExtra("result",evalInt)
+        }
+        startActivity(intent)
     }
 
     private fun start()  {
@@ -215,43 +221,6 @@ class ColorTestActivity: AppCompatActivity() {
                 true
             }
             else -> super.onKeyDown(keyCode, event)
-        }
-    }
-
-    private fun createFile() {
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TITLE, File.fileName)
-        }
-        startActivityForResult(intent, 1)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
-            when (resultCode) {
-                RESULT_OK -> if (data != null
-                    && data.data != null
-                ) {
-                    writeInFile(data.data!!, File.fileText)
-                }
-                RESULT_CANCELED -> {
-                }
-            }
-        }
-    }
-
-    private fun writeInFile(uri: Uri, text: String) {
-        val outputStream: OutputStream?
-        try {
-            outputStream = contentResolver.openOutputStream(uri)
-            val bw = BufferedWriter(OutputStreamWriter(outputStream))
-            bw.write(text)
-            bw.flush()
-            bw.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
     }
 }

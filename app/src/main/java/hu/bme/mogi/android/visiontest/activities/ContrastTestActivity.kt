@@ -100,14 +100,9 @@ class ContrastTestActivity: AppCompatActivity() {
     }
 
     private fun setFrequency(cpd: Float) {
-        //TODO: A kör nem alfázott közepe legyen két térszög, ne az egész kép?
-        val source = BitmapFactory.decodeResource(
-            applicationContext.resources,
-            R.drawable.black_square
-        )
-        val width = source.width
-        val height = source.height
-        val pixels = IntArray(width * height)
+        //A térszög a teljes alfájú kör sugara legyen?
+        val width = 100
+        val pixels = IntArray(width * width)
         var hsv: FloatArray
         val freq = (cpd*4).roundToInt()/2
         //val svd = File.
@@ -117,20 +112,15 @@ class ContrastTestActivity: AppCompatActivity() {
         //if(svd/2<cpd)
 0
         var index = 0
-        for (y in 0 until height) {
+        for (y in 0 until width) {
+            val value = sin(2f/freq + (6.28f * y.toFloat() * freq) / width ) / 2 + 0.5f
             for (x in 0 until width) {
                 hsv= floatArrayOf(
                     0f,
                     0f,
-                    sin(2f/freq + (6.28f * x.toFloat() * freq) / width ) / 2 + 0.5f
+                    value
                 )
                 val hsvColor = Color.HSVToColor(hsv)
-//                if((width.toFloat()/2-x).pow(2)+(height.toFloat()/2-y).pow(2)<alphaBorderWidth.pow(2)) pixels[index] = hsvColor
-//                else {
-//                    val alpha = ((1-(x.toFloat()/width - 0.5f).pow(2)*2-(y.toFloat()/height - 0.5f-0.8f).pow(2)*2)*100).toInt()
-//                        //val alpha = ((1 - 0.5f*(abs(width.toFloat()/2-x)-alphaBorderWidth).pow(2)/(width.toFloat()/2-alphaBorderWidth) - 0.5f*(abs(width.toFloat()/2-y)-alphaBorderWidth).pow(2)/(width.toFloat()/2-alphaBorderWidth))*100).toInt()
-//                    pixels[index] = Color.argb(alpha,hsvColor.red,hsvColor.green,hsvColor.blue)
-//                }
                 val r = sqrt((x-wfel).pow(2)+(y-wfel).pow(2))
                 if(r<=wa) pixels[index] = hsvColor
                 else if (r>wa && r<wfel) {
@@ -143,8 +133,8 @@ class ContrastTestActivity: AppCompatActivity() {
             }
         }
 
-        val bmOut = Bitmap.createBitmap(width, height, source.config)
-        bmOut.setPixels(pixels, 0, width, 0, 0, width, height)
+        val bmOut = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888)
+        bmOut.setPixels(pixels, 0, width, 0, 0, width, width)
         gaussView.setImageBitmap(bmOut)
         //File.saveImage(bmOut)
     }
@@ -178,13 +168,20 @@ class ContrastTestActivity: AppCompatActivity() {
     private fun evaluate() {
         var fileText="\n\nCONTRAST SENSITIVITY:\n"
         var result = "High contrast sensitivity."
+        var evalInt = 0
         var mistakeMade = false
 
         for (i in guesses.indices) {
             if(!guesses[i] && !mistakeMade){
-                result = when(i) {
-                    in 0..4 -> "Low contrast sensitivity."
-                    else -> "Mostly adequate contrast sensitivity."
+                when(i) {
+                    in 0..4 -> {
+                        result = "Low contrast sensitivity."
+                        evalInt = 1
+                    }
+                    else -> {
+                        result = "Mostly adequate contrast sensitivity."
+                        evalInt = 1
+                    }
                 }
                 mistakeMade = true
             }
@@ -196,7 +193,10 @@ class ContrastTestActivity: AppCompatActivity() {
         }
         fileText+= "\tEVALUATION:\n\t$result\n"
         File.fileText+=fileText
-        val intent = Intent(this, ColorTestActivity::class.java)
+        val intent = Intent(this, ResultsActivity::class.java).apply {
+            putExtra("type",1)
+            putExtra("result",evalInt)
+        }
         startActivity(intent)
     }
 

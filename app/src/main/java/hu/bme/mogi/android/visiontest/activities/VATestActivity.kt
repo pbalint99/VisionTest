@@ -204,10 +204,20 @@ class VATestActivity  : AppCompatActivity() {
             else Evaluation.BAD
         }
         val toastText: String
-        toastText = when(eval) {
-            Evaluation.GOOD -> "High visual acuity."
-            Evaluation.QUESTIONABLE -> "Mostly adequate visual acuity."
-            Evaluation.BAD -> "Low visual acuity."
+        val evalInt: Int
+        when(eval) {
+            Evaluation.GOOD -> {
+                toastText = "High visual acuity."
+                evalInt = 0
+            }
+            Evaluation.QUESTIONABLE -> {
+                toastText = "Mostly adequate visual acuity."
+                evalInt = 1
+            }
+            Evaluation.BAD -> {
+                toastText = "Low visual acuity."
+                evalInt = 2
+            }
         }
         Toast.makeText(applicationContext, toastText, Toast.LENGTH_SHORT).show()
 
@@ -225,7 +235,11 @@ class VATestActivity  : AppCompatActivity() {
         fileText+="\tRESULTS:\n\tFIRST ATTEMPT:\n\t\t60/"+results[0].toString()+
                 "\n\tSECOND ATTEMPT:\n\t\t60/"+results[1].toString()+"\n\tEVALUATION:\n\t"+toastText
         File.fileText+=fileText
-        val intent = Intent(this, ContrastTestActivity::class.java)
+
+        val intent = Intent(this, ResultsActivity::class.java).apply {
+            putExtra("type",0)
+            putExtra("result",evalInt)
+        }
         startActivity(intent)
     }
 

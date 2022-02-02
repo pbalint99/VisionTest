@@ -154,6 +154,16 @@
         android:textColor="#000000"
         />
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/colordemo" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vguideline"
         android:layout_width="wrap_content"

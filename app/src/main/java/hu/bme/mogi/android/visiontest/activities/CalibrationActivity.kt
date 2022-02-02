@@ -15,6 +15,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.File
 import hu.bme.mogi.android.visiontest.R
 import kotlinx.android.synthetic.main.activity_calibration.*
+import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStream
@@ -90,19 +92,19 @@ class CalibrationActivity: AppCompatActivity() {
             if (checkSystemWritePermission()) {
                 setBrightness(255)
             } else {
-                Toast.makeText(
-                    applicationContext,
-                    "Please allow modifying system settings.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                //Toast.makeText(
+//                    applicationContext,
+//                    "Please allow modifying system settings.",
+//                    Toast.LENGTH_SHORT
+//                ).show()
             }
         } catch (e: Exception) {
             Log.i("settings", e.toString())
-            Toast.makeText(
-                applicationContext,
-                "Please allow modifying system settings.",
-                Toast.LENGTH_SHORT
-            ).show()
+//            Toast.makeText(
+//                applicationContext,
+//                "Please allow modifying system settings.",
+//                Toast.LENGTH_SHORT
+//            ).show()
         }
         val size = Point()
         display?.getRealSize(size)
@@ -128,6 +130,9 @@ class CalibrationActivity: AppCompatActivity() {
             putInt("day", daySet)
             apply()
         }
+        var sdf = SimpleDateFormat("yyyy.MM.dd, hh:mm")
+        var currentDate = sdf.format(Date())
+        File.fileText+="PATIENT: $name\nDate: $currentDate\n\n"
         name = name.replace(" ", "").replace("ő", "o").replace("ó", "o").replace("ö", "o").replace(
             "ű",
             "u"
@@ -135,9 +140,10 @@ class CalibrationActivity: AppCompatActivity() {
             "í",
             "i"
         )
-        val sdf = SimpleDateFormat("yyyy/MM/hh")
-        val currentDate = sdf.format(Date())
-        File.fileName = name+"_$currentDate"
+        sdf = SimpleDateFormat("yyyy_MM_dd_hh:mm")
+        currentDate = sdf.format(Date())
+        File.fileName = name+"_"+"_$currentDate"
+        File.fileText = ""
     }
 
     @Suppress("NAME_SHADOWING")
@@ -173,11 +179,23 @@ class CalibrationActivity: AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.color_calibration -> {
-                val intent = Intent(this, ColorCalibrationActivity::class.java)
+                val intent = Intent(this, ParametersActivity::class.java)
                 startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_ENTER -> {
+                start()
+                val intent = Intent(this, VATestActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
         }
     }
 }

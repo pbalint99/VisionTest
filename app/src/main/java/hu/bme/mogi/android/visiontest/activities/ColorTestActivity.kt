@@ -10,6 +10,7 @@ import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.File
@@ -31,17 +32,15 @@ import java.io.OutputStream
 import java.io.OutputStreamWriter
 
 class ColorTestActivity: AppCompatActivity() {
-    var bgColor = floatArrayOf(57f,245f) //Ishihara: 57f
-    var dotColor = floatArrayOf(31f,65f) //Ishihara:31f
     var correctDir = 5
     var level = 0
-    var guesses = BooleanArray(5)
-    private var index = 0
+    var guesses = BooleanArray(40)
     var dotScreenRatio = 0.2f
     private lateinit var passButton : MenuItem
     private lateinit var menuText : MenuItem
     private var started = false
     private var dotViews = arrayOfNulls<ImageView>(4)
+    var trialsPerColor = 2
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,18 +83,15 @@ class ColorTestActivity: AppCompatActivity() {
         if(!started) return
         guesses[level] = dir == correctDir
 
-        if(level == 4) {
+        if(level == 5) {
             evaluate()
             return
         }
-//        if(level == 4) {
-//            index++
-//        }
         correctDir = (0..3).random()
 
-        applyNoises(index)
-
         level++
+        applyNoises(level)
+
     }
 
     private fun evaluate() {
@@ -108,7 +104,12 @@ class ColorTestActivity: AppCompatActivity() {
         var fileText="\n\nCOLOR PERCEPTION:\n"
         var result = "Trichromat."
 
-        for (i in guesses.indices) {
+        for (i in 0 until trialsPerColor*3) {
+            when(i) {
+                0,1 -> fileText+="\tRED:\t"
+                2,3 -> fileText+="\tGREEN:\t"
+                else -> fileText+="\tBLUE:\t"
+            }
             if(!guesses[i]){
                 result = "Not trichromat"
                 evalInt = 1
@@ -129,6 +130,7 @@ class ColorTestActivity: AppCompatActivity() {
 
     private fun start()  {
         textView.text = ""
+        imageView.visibility = View.INVISIBLE
 
         dotViews[0] = dotViewUp
         dotViews[1] = dotViewRight
@@ -144,13 +146,17 @@ class ColorTestActivity: AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         Noise.setup(displayMetrics)
 
-        val dotWidth = ViewMover.degreeToPixels(1.0,displayMetrics,getSharedPreferences("sp", Context.MODE_PRIVATE))
+        val sharedPref = getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return
+        val dotWidth = ViewMover.degreeToPixels(1.0,displayMetrics,sharedPref)
         dotScreenRatio = dotWidth.toFloat()/displayMetrics.widthPixels
         for (i in dotViews.indices) {
             val dotParams = dotViews[i]?.layoutParams
             dotParams?.width = dotWidth
             dotParams?.height = dotWidth
         }
+        Noise.circleColorDensity = sharedPref.getFloat("fillpercent",20f)/100
+        Noise.circleSat = sharedPref.getFloat("saturation",20f)/100
+        trialsPerColor = sharedPref.getInt("colorTrials",2)
 
         applyNoises(0)
 
@@ -158,15 +164,21 @@ class ColorTestActivity: AppCompatActivity() {
     }
 
     //TODO: also for button control
-    private fun applyNoises(index: Int) {
+    private fun applyNoises(level: Int) {
         noiseView.setImageBitmap(
             Noise.applyNoise()
         )
+        //Noise.circleColorDensity = 0.7f
+        val color = when(level) {
+            0,1 -> 0f
+            2,3 -> 120f
+            else -> 240f
+        }
         for (i in dotViews.indices) {
-            val color = if(correctDir == i) 0f
-                else ((5..8).random()*(-1)).toFloat()/10
+            val finalColor = if(correctDir != i)  ((5..8).random()*(-1)).toFloat()/10
+            else color
             dotViews[i]?.setImageBitmap(
-                Noise.applyNoiseAmorphous(color, dotScreenRatio)
+                Noise.applyNoiseAmorphous(finalColor, dotScreenRatio)
             )
         }
     }

@@ -10,8 +10,8 @@ import kotlin.math.max
 object Noise {
     //const val colorWiggleRoom = 100f
     //const val satWiggleRoom = 0.5f
-    private const val circleColorDensity = 0.3f
-    private const val circleSat = 0.3f
+    var circleColorDensity = 0.5f
+    var circleSat = 0.2f
     private val radii = IntArray(101)
     private val xCoords = IntArray(101)
     private val yCoords = IntArray(101)
@@ -23,6 +23,7 @@ object Noise {
     var aspectRatio: Float = 0.2f
     var heightCells = 100
     var dotWidthCells = 100
+    val blueCorrectionFactor = 1.2f
 
     fun applyNoise(): Bitmap {
         var index = 0
@@ -55,6 +56,7 @@ object Noise {
         val pixels = IntArray(dotWidthCells * dotWidthCells) { Color.TRANSPARENT } //Also cells
         val circles = 0..(6..12).random()
 
+        if(color==240f) circleSat *= blueCorrectionFactor
         for (i in circles) {
             radii[i] = (dotWidthCells / 10..dotWidthCells / 5).random()
             xCoords[i] = (radii[i]..(dotWidthCells - radii[i])).random()

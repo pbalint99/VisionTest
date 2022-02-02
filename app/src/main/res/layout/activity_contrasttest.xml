@@ -34,7 +34,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:scaleType="centerInside"
-        android:src="@drawable/sin_proba"
+        android:src="@drawable/gabor"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/downguideline"
         app:layout_constraintEnd_toEndOf="parent"

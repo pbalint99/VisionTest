@@ -36,6 +36,7 @@ class VATestActivity  : AppCompatActivity() {
     private var keyboardConnected = true
     private lateinit var passButton: MenuItem
     private lateinit var menuText: MenuItem
+    private var minimumAcuity: Int = 0
 
     //Amerikai szabvány alapján:
     private val sixMSizes: FloatArray = floatArrayOf(
@@ -74,6 +75,7 @@ class VATestActivity  : AppCompatActivity() {
 
         val sharedPref = getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return
         distance = sharedPref.getFloat("distance", 6f)
+        minimumAcuity = sharedPref.getInt("minimumAcuity",12)
 
         val gameControllers = File.getGameControllerIds()
 
@@ -180,21 +182,22 @@ class VATestActivity  : AppCompatActivity() {
         if(allGuesses == 0) allGuesses = firstRoundGuesses+9
 
         for (i in 0 until firstRoundGuesses) {
-            if(!guesses[i] && results[0] == 4) {
-                if(i>0) results[0] = distances[i-1]
-                else results[0] = 999
-                //File.smallestVisibleInDegrees=atan(sixMSizes[i-1]/30000)*57.2957f
+            if(!guesses[i] && results[0] == 4 && i>0) {
+                results[0] = distances[i-1]
+                File.smallestVisibleInDegrees=atan(sixMSizes[i-1]/6000)*57.2957f*2
             }
         }
         for (i in firstRoundGuesses until allGuesses) {
             if(!guesses[i-firstRoundGuesses] && results[1] == 4) {
                 results[1] = distances[i - firstRoundGuesses]
-                val svid = sixMSizes[i - firstRoundGuesses] * distance / 30
-                if(File.smallestVisibleInDegrees>svid) File.smallestVisibleInDegrees=atan(sixMSizes[i - firstRoundGuesses]/30000)*57.2957f
+                //val svid = sixMSizes[i - firstRoundGuesses] * distance / 30
+                val svid = atan(sixMSizes[i-firstRoundGuesses]/6000)*57.2957f*2
+                if(File.smallestVisibleInDegrees>svid) File.smallestVisibleInDegrees=svid
             }
         }
         if(File.smallestVisibleInDegrees == 0f) {
-            File.smallestVisibleInDegrees = atan(sixMSizes.last()/30000)*57.2957f //57: rad to deg
+            val svd = atan(sixMSizes.last()/30000)*57.2957f //57: rad to deg
+            File.smallestVisibleInDegrees = svd
         }
 
         //Popup:
@@ -219,7 +222,7 @@ class VATestActivity  : AppCompatActivity() {
                 evalInt = 2
             }
         }
-        Toast.makeText(applicationContext, toastText, Toast.LENGTH_SHORT).show()
+        //Toast.makeText(applicationContext, toastText, Toast.LENGTH_SHORT).show()
 
         //Writing to file:
         var fileText = "VISUAL ACUITY:\n\tFIRST ATTEMPT:\n"
@@ -233,12 +236,19 @@ class VATestActivity  : AppCompatActivity() {
             fileText+="\t\t60/"+distances[distIndex]+":\t"+res+'\n'
         }
         fileText+="\tRESULTS:\n\tFIRST ATTEMPT:\n\t\t60/"+results[0].toString()+
-                "\n\tSECOND ATTEMPT:\n\t\t60/"+results[1].toString()+"\n\tEVALUATION:\n\t"+toastText
+                "\n\tSECOND ATTEMPT:\n\t\t6/"+results[1].toString()+"\n\tEVALUATION:\n\t"+toastText
         File.fileText+=fileText
+        var intent = Intent()
+        if(results[0]>=minimumAcuity && results[1]>=minimumAcuity) {
+            Toast.makeText(applicationContext,"LOW VISUAL ACUITY",Toast.LENGTH_SHORT).show()
+            intent = Intent(this, CalibrationActivity::class.java).apply {
 
-        val intent = Intent(this, ResultsActivity::class.java).apply {
-            putExtra("type",0)
-            putExtra("result",evalInt)
+            }
+        } else {
+            intent = Intent(this, ResultsActivity::class.java).apply {
+                putExtra("type", 0)
+                putExtra("result", evalInt)
+            }
         }
         startActivity(intent)
     }

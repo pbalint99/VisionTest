@@ -13,8 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.ResultsActivity"></activity>
-        <activity android:name=".activities.ColorCalibrationActivity" />
+        <activity android:name=".activities.ParametersActivity"></activity>
+        <activity android:name=".activities.ResultsActivity" />
         <activity android:name=".activities.CalibrationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

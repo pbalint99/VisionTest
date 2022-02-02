@@ -1,6 +1,7 @@
 package hu.bme.mogi.android.visiontest.activities
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -63,6 +64,12 @@ class ResultsActivity : AppCompatActivity() {
         bottomTV.setOnClickListener{
             next()
         }
+
+        val gameControllers = File.getGameControllerIds()
+        if(resources.configuration.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES &&
+            gameControllers.isEmpty()) {
+            bottomTV.text = "Continue"
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -82,46 +89,47 @@ class ResultsActivity : AppCompatActivity() {
             else Intent(this, ColorTestActivity::class.java)
             startActivity(intent)
         } else {
-            createFile()
-//            val intent = Intent(this,CalibrationActivity::class.java)
-//            startActivity(intent)
+            File.writeFileOnInternalStorage()
+//            createFile()
+            val intent = Intent(this,CalibrationActivity::class.java)
+            startActivity(intent)
         }
     }
 
-    private fun createFile() {
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TITLE, File.fileName)
-        }
-        startActivityForResult(intent, 1)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
-            when (resultCode) {
-                RESULT_OK -> if (data != null
-                    && data.data != null
-                ) {
-                    writeInFile(data.data!!, File.fileText)
-                }
-                RESULT_CANCELED -> {
-                }
-            }
-        }
-    }
-
-    private fun writeInFile(uri: Uri, text: String) {
-        val outputStream: OutputStream?
-        try {
-            outputStream = contentResolver.openOutputStream(uri)
-            val bw = BufferedWriter(OutputStreamWriter(outputStream))
-            bw.write(text)
-            bw.flush()
-            bw.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
+//    private fun createFile() {
+//        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+//            addCategory(Intent.CATEGORY_OPENABLE)
+//            type = "text/plain"
+//            putExtra(Intent.EXTRA_TITLE, File.fileName)
+//        }
+//        startActivityForResult(intent, 1)
+//    }
+//
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == 1) {
+//            when (resultCode) {
+//                RESULT_OK -> if (data != null
+//                    && data.data != null
+//                ) {
+//                    writeInFile(data.data!!, File.fileText)
+//                }
+//                RESULT_CANCELED -> {
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun writeInFile(uri: Uri, text: String) {
+//        val outputStream: OutputStream?
+//        try {
+//            outputStream = contentResolver.openOutputStream(uri)
+//            val bw = BufferedWriter(OutputStreamWriter(outputStream))
+//            bw.write(text)
+//            bw.flush()
+//            bw.close()
+//        } catch (e: IOException) {
+//            e.printStackTrace()
+//        }
+//    }
 }

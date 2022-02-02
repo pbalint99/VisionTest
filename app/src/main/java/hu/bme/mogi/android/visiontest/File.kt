@@ -5,6 +5,10 @@ import android.os.Environment
 import android.view.InputDevice
 import java.io.File
 import java.io.FileOutputStream
+import java.io.FileWriter
+import java.io.PrintWriter
+import java.util.*
+
 object File {
     var smallestVisibleInDegrees = 0f
     var fileName = "VisionTestNamingError"
@@ -12,24 +16,23 @@ object File {
     var fileText = ""
     var onlyOneTest = false
 
-//    fun writeFileOnInternalStorage(sBody: String?) {
-//        try {
-////            val gpxfile = File(dir, fileName+".txt")
-////            val writer = PrintWriter(gpxfile,true)
-////            writer.append(sBody)
-////            writer.flush()
-////            writer.close()
-////            File(dir,"$fileName.txt").printWriter().use { out ->
-////                out.println(sBody)
-////            }
-//            val dir: File =
-//                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-//            File(dir,"$fileName.txt").appendText(sBody!!)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            throw IllegalArgumentException("Couldn't write to file")
-//        }
-//    }
+    fun writeFileOnInternalStorage() {
+        val dir: File =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        if (!dir.exists()) {
+            dir.mkdir()
+        }
+        try {
+            val gpxfile = File(dir, "$fileName.txt")
+            val writer = FileWriter(gpxfile,true)
+            writer.append(fileText)
+            writer.flush()
+            writer.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     fun saveImage(finalBitmap: Bitmap) {
         val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         if (!dir.exists()) {

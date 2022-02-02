@@ -8,7 +8,7 @@
         app:showAsAction="always" >
         <menu>
             <item android:id="@+id/color_calibration"
-                android:title="@string/color_calibration" />
+                android:title="@string/refine_parameters" />
         </menu>
     </item>
 </menu>

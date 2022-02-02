@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Vision Test</string>
     <string name="visual_acuity_test">Visual Acuity Test</string>
-    <string name="width_of_screen">Width of screen in millimeters:</string>
     <string name="device_distance_in_meters">Device distance in meters</string>
     <string name="done">Done</string>
     <string name="color_perception_test">Color Perception Test</string>
@@ -9,10 +8,10 @@
     <string name="contrast_test">Contrast Test</string>
     <string name="start_keyboard">Press SPACE to start</string>
     <string name="name">Name</string>
-    <string name="find">Find which side the image is on.\nThe image:</string>
+    <string name="find">Which direction is the image?</string>
     <string name="can_t_see_it">Can\'t see it</string>
     <string name="arrow">arrow</string>
-    <string name="color_instructions">Find which side the colored dot is on.</string>
+    <string name="color_instructions">Which direction is the colored shape?</string>
     <string name="start">Start</string>
     <string name="start_in_order">Start in order</string>
     <string name="pick_date">Pick date</string>
@@ -27,4 +26,5 @@
     <string name="value_0_1">Value (0–1)</string>
     <string name="rgb">RGB</string>
     <string name="press_space_to_contine">Press space to contine</string>
+    <string name="refine_parameters">Refine parameters</string>
 </resources>

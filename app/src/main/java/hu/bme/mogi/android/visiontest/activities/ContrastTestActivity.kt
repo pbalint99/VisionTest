@@ -34,10 +34,10 @@ class ContrastTestActivity: AppCompatActivity() {
     //TODO: apply aspect ratio to noise
     var prevDir = 5
     var level = 0
-    var guesses = BooleanArray(6)
-    var alphas = FloatArray(6)
-    var frequencies = FloatArray(6)
-    var alpha = 0.9f
+    var guesses = BooleanArray(40)
+    var alphas = FloatArray(40)
+    var frequencies = FloatArray(40)
+    var alpha = 0.1f
     var cpd = 1.5f
     var started = false
     var displayMetrics = DisplayMetrics()
@@ -45,6 +45,10 @@ class ContrastTestActivity: AppCompatActivity() {
     var keyboardConnected = true
     lateinit var passButton : MenuItem
     lateinit var menuText : MenuItem
+    var changeFreqBasedOnVA = false
+    var trials = 6
+    var cpdMult = 2f
+    var contrastMult = 2f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,27 +93,41 @@ class ContrastTestActivity: AppCompatActivity() {
         @Suppress("DEPRECATION")
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val gaussParams = gaussView.layoutParams
+        val sharedPref = getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return
         val gaussWidth = ViewMover.degreeToPixels(
-            2.0, displayMetrics, getSharedPreferences(
-                "sp",
-                Context.MODE_PRIVATE
-            )
+            1.0, displayMetrics, sharedPref
         )
         gaussParams.width = gaussWidth
         gaussParams.height = gaussWidth
+
+        changeFreqBasedOnVA = sharedPref.getBoolean("useVA",false)
+        trials = sharedPref.getInt("contrastTrials",6)
+        cpd = sharedPref.getFloat("minFreq",1.5f)
+        alpha = sharedPref.getFloat("maxContrast",10f)
+        val maxCpd = sharedPref.getFloat("maxFreq", 4f)
+        val minContrast = sharedPref.getFloat("minContrast",4f)
+        cpdMult = (maxCpd/cpd).pow(1f/(trials-1))
+        contrastMult = (minContrast/alpha).pow(1f/(trials-1))
+        alpha *= 0.01f
+        //Toast.makeText(applicationContext,cpdMult.toString()+" "+contrastMult.toString(),Toast.LENGTH_SHORT).show()
     }
 
     private fun setFrequency(cpd: Float) {
         //A térszög a teljes alfájú kör sugara legyen?
+        var cpd = cpd
         val width = 100
         val pixels = IntArray(width * width)
         var hsv: FloatArray
-        val freq = (cpd*4).roundToInt()/2
-        //val svd = File.
-        val alpha = 0.3f //A teljes alfájú kör sugara, max 0.5f
+        val svd = File.smallestVisibleInDegrees
+        val alpha = 0.2f //A teljes alfájú kör sugara, max 0.5f
         val wfel = width.toFloat()/2
         val wa = wfel*2*alpha
-        //if(svd/2<cpd)
+
+        if(svd>2/cpd && changeFreqBasedOnVA) {
+            cpd = 1/svd
+            //Toast.makeText(applicationContext,"Spatial freq. max at $cpd cpd",Toast.LENGTH_SHORT).show()
+        }
+        val freq = (cpd*4).roundToInt()/2
 0
         var index = 0
         for (y in 0 until width) {
@@ -148,11 +166,11 @@ class ContrastTestActivity: AppCompatActivity() {
         alphas[level] = alpha
 
         //Values by Mirella:
-        cpd *= 1.3195f
-        alpha *= 0.8705f
+        cpd *= cpdMult
+        alpha *= contrastMult
         gaussView.alpha = alpha
 
-        if(level == 5) {
+        if(level == trials-1) {
             evaluate()
             return
         }
@@ -171,7 +189,7 @@ class ContrastTestActivity: AppCompatActivity() {
         var evalInt = 0
         var mistakeMade = false
 
-        for (i in guesses.indices) {
+        for (i in 0..trials) {
             if(!guesses[i] && !mistakeMade){
                 when(i) {
                     in 0..4 -> {

@@ -16,26 +16,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
-    <EditText
-        android:id="@+id/etDistance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:gravity="center"
-        android:inputType="numberDecimal"
-        android:textColor="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/DistanceTextView" />
-
     <TextView
         android:id="@+id/etAge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Date of birth"
+        android:text="@string/date_of_birth"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -89,11 +74,41 @@
         android:background="@color/colorPrimary"
         android:text="@string/start_in_order"
         android:textColor="#FFFFFF"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ToggleButton
+        android:id="@+id/nearBtn"
+        android:layout_width="160dp"
+        android:layout_height="58dp"
+        android:text="@string/near"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintEnd_toStartOf="@+id/guideline17"
+        app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
-        android:textSize="20sp"/>
+        app:layout_constraintTop_toBottomOf="@+id/DistanceTextView"
+        app:layout_constraintVertical_bias="0.5"
+        android:textOff="@string/near"
+        android:textOn="@string/near"/>
+
+    <ToggleButton
+        android:id="@+id/farBtn"
+        android:layout_width="160dp"
+        android:layout_height="58dp"
+        android:text="@string/far"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/nearBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="@+id/guideline17"
+        app:layout_constraintTop_toTopOf="@+id/nearBtn"
+        app:layout_constraintVertical_bias="0.0"
+        android:textOff="@string/far"
+        android:textOn="@string/far"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -127,14 +142,21 @@
         android:id="@+id/chooseSpecificTv"
         android:layout_width="match_parent"
         android:layout_height="58dp"
+        android:gravity="center"
         android:text="@string/choose_specific_test"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline4"
-        app:layout_constraintVertical_bias="0.19"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:textColor="@color/colorPrimary"/>
+        app:layout_constraintVertical_bias="0.19" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

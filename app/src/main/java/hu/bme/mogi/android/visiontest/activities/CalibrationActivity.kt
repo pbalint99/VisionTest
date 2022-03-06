@@ -18,16 +18,11 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.mogi.android.visiontest.File
 import hu.bme.mogi.android.visiontest.R
 import kotlinx.android.synthetic.main.activity_calibration.*
 import kotlinx.android.synthetic.main.activity_contrasttest_keyboard.*
-import java.io.BufferedWriter
-import java.io.IOException
-import java.io.OutputStream
-import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,6 +31,7 @@ class CalibrationActivity: AppCompatActivity() {
 
     private lateinit var sharedPref: SharedPreferences
     private var yearSet = 2000; private var monthSet = 6; private var daySet = 15
+    private var distance = 4f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,13 +56,29 @@ class CalibrationActivity: AppCompatActivity() {
             startActivity(intent)
         }
 
+        //farBtn.setOnClickListener{
+        //    distance = 4f
+        //}
+
+        //nearBtn.setOnClickListener{
+        //    distance = 0.4f
+        //}
+
         yearSet = sharedPref.getInt("year", 2000)
         monthSet = sharedPref.getInt("month", 6)
         daySet = sharedPref.getInt("day", 15)
         var date = "$yearSet/${monthSet+1}/$daySet"
         etName.setText(sharedPref.getString("name", ""))
-        etDistance.setText(sharedPref.getFloat("distance", 2f).toString())
+        //etDistance.setText(sharedPref.getFloat("distance", 2f).toString())
         mDisplayDate.text = date
+        if(sharedPref.getFloat("distance",4f)==4f) {
+            farBtn.isChecked = true
+            nearBtn.isChecked = false
+        }
+        else {
+            farBtn.isChecked = false
+            nearBtn.isChecked = true
+        }
 
         mDisplayDate.setOnClickListener {
             val year = yearSet
@@ -91,20 +103,9 @@ class CalibrationActivity: AppCompatActivity() {
         try {
             if (checkSystemWritePermission()) {
                 setBrightness(255)
-            } else {
-                //Toast.makeText(
-//                    applicationContext,
-//                    "Please allow modifying system settings.",
-//                    Toast.LENGTH_SHORT
-//                ).show()
             }
         } catch (e: Exception) {
             Log.i("settings", e.toString())
-//            Toast.makeText(
-//                applicationContext,
-//                "Please allow modifying system settings.",
-//                Toast.LENGTH_SHORT
-//            ).show()
         }
         val size = Point()
         display?.getRealSize(size)
@@ -123,7 +124,7 @@ class CalibrationActivity: AppCompatActivity() {
     fun start() {
         var name = etName.text.toString()
         with(sharedPref.edit()) {
-            putFloat("distance", etDistance.text.toString().toFloat())
+            putFloat("distance", distance)
             putString("name", name)
             putInt("year", yearSet)
             putInt("month", monthSet)
@@ -140,9 +141,9 @@ class CalibrationActivity: AppCompatActivity() {
             "í",
             "i"
         )
-        sdf = SimpleDateFormat("yyyy_MM_dd_hh:mm")
+        sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm")
         currentDate = sdf.format(Date())
-        File.fileName = name+"_"+"_$currentDate"
+        File.fileName = name+"_$currentDate"
         File.fileText = ""
     }
 
@@ -181,6 +182,10 @@ class CalibrationActivity: AppCompatActivity() {
             R.id.color_calibration -> {
                 val intent = Intent(this, ParametersActivity::class.java)
                 startActivity(intent)
+                true
+            }
+            R.id.hungarian -> {
+
                 true
             }
             else -> super.onOptionsItemSelected(item)

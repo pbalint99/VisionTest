@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Vision Test</string>
     <string name="visual_acuity_test">Visual Acuity Test</string>
-    <string name="device_distance_in_meters">Device distance in meters</string>
+    <string name="device_distance_in_meters" translatable="false">Device distance in meters</string>
     <string name="done">Done</string>
     <string name="color_perception_test">Color Perception Test</string>
     <string name="calibrate">Calibrate</string>
@@ -10,21 +10,25 @@
     <string name="name">Name</string>
     <string name="find">Which direction is the image?</string>
     <string name="can_t_see_it">Can\'t see it</string>
-    <string name="arrow">arrow</string>
+    <string name="arrow" translatable="false">arrow</string>
     <string name="color_instructions">Which direction is the colored shape?</string>
-    <string name="start">Start</string>
+    <string name="start" translatable="false">Start</string>
     <string name="start_in_order">Start in order</string>
     <string name="pick_date">Pick date</string>
     <string name="choose_specific_test">Choose specific test</string>
-    <string name="green">Green (0–255)</string>
-    <string name="red">Red (0–255)</string>
-    <string name="HSV">HSV</string>
-    <string name="blue">Blue (0–255)</string>
-    <string name="color_calibration">Color calibration</string>
-    <string name="hue_0_360">Hue (0–360)</string>
-    <string name="saturation_0_1">Saturation (0–1)</string>
-    <string name="value_0_1">Value (0–1)</string>
-    <string name="rgb">RGB</string>
+    <string name="green" translatable="false">Green (0–255)</string>
+    <string name="red" translatable="false">Red (0–255)</string>
+    <string name="HSV" translatable="false">HSV</string>
+    <string name="blue" translatable="false">Blue (0–255)</string>
+    <string name="color_calibration" translatable="false">Color calibration</string>
+    <string name="hue_0_360" translatable="false">Hue (0–360)</string>
+    <string name="saturation_0_1" translatable="false">Saturation (0–1)</string>
+    <string name="value_0_1" translatable="false">Value (0–1)</string>
+    <string name="rgb" translatable="false">RGB</string>
     <string name="press_space_to_contine">Press space to contine</string>
-    <string name="refine_parameters">Refine parameters</string>
+    <string name="refine_parameters" translatable="false">Refine parameters</string>
+    <string name="date_of_birth">Date of birth</string>
+    <string name="visual_acuity" translatable="false">Visual acuity:</string>
+    <string name="near">Near</string>
+    <string name="far">Far</string>
 </resources>

@@ -41,6 +41,7 @@ class ColorTestActivity: AppCompatActivity() {
     private var started = false
     private var dotViews = arrayOfNulls<ImageView>(4)
     var trialsPerColor = 2
+    var colorDegrees = 1f
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +77,9 @@ class ColorTestActivity: AppCompatActivity() {
                 guess(3)
             }
         } else setContentView(R.layout.activity_color_keyboard)
+
+        val sharedPref = getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return
+        colorDegrees = sharedPref.getFloat("colorDegrees",1f)
 
     }
 
@@ -147,7 +151,7 @@ class ColorTestActivity: AppCompatActivity() {
         Noise.setup(displayMetrics)
 
         val sharedPref = getSharedPreferences("sp", Context.MODE_PRIVATE) ?: return
-        val dotWidth = ViewMover.degreeToPixels(1.0,displayMetrics,sharedPref)
+        val dotWidth = ViewMover.degreeToPixels(colorDegrees.toDouble(),displayMetrics,sharedPref)
         dotScreenRatio = dotWidth.toFloat()/displayMetrics.widthPixels
         for (i in dotViews.indices) {
             val dotParams = dotViews[i]?.layoutParams

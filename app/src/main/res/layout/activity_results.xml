@@ -19,7 +19,7 @@
         android:layout_height="0dp"
         android:background="@color/colorPrimaryDark"
         android:gravity="center"
-        android:text="Visual acuity: "
+        android:text="@string/visual_acuity"
         android:visibility="gone"
         android:textColor="#FFFFFF"
         android:textSize="30sp"

@@ -29,6 +29,8 @@ class ParametersActivity : AppCompatActivity() {
         trialsPerColorET.setText(sharedPref.getInt("colorTrials",2).toString())
         fillET.setText(sharedPref.getFloat("fillPercent",10f).toString())
         saturationET.setText(sharedPref.getFloat("saturation",10f).toString())
+        contrastDegreesET.setText(sharedPref.getFloat("contrastDegrees",1f).toString())
+        colorDegreesET.setText(sharedPref.getFloat("colorDegrees",1f).toString())
     }
 
     override fun onPause() {
@@ -44,6 +46,8 @@ class ParametersActivity : AppCompatActivity() {
             putInt("colorTrials",floor(trialsPerColorET.text.toString().toFloat()).toInt())
             putFloat("fillPercent",fillET.text.toString().toFloat())
             putFloat("saturation",saturationET.text.toString().toFloat())
+            putFloat("colorDegrees",colorDegreesET.text.toString().toFloat())
+            putFloat("contrastDegrees",contrastDegreesET.text.toString().toFloat())
             apply()
         }
     }
